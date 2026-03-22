@@ -1,0 +1,2 @@
+ALTER TABLE reviews ADD COLUMN IF NOT EXISTS ai_confidence REAL DEFAULT 0;
+ALTER TABLE reviews DROP COLUMN IF EXISTS ai_decision;

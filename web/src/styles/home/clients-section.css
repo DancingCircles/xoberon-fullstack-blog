@@ -1,0 +1,61 @@
+/* Clients Section */
+
+.section-clients {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: var(--space-96) 0 var(--space-80);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  gap: var(--space-40);
+  min-height: 100vh;
+}
+
+.section-clients__header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-32);
+}
+
+.section-clients__title {
+  margin: 0;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: clamp(5rem, 12vw, 11rem);
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.section-clients__title-line {
+  color: var(--color-cream);
+  letter-spacing: 0.02em;
+}
+
+.section-clients__title-line--red {
+  color: var(--color-accent);
+  letter-spacing: 0.02em;
+}
+
+.section-clients__intro {
+  max-width: 600px;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 1.2rem;
+  line-height: 1.7;
+  font-weight: 400;
+  padding: 0 var(--space-24);
+}
+
+@media (max-width: 600px) {
+  .section-clients__title {
+    font-size: clamp(3rem, 12vw, 5rem);
+  }
+}

@@ -1,0 +1,122 @@
+.cuphead-model {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  position: relative;
+}
+
+@media (max-width: 600px) {
+  .cuphead-model {
+    min-height: 0;
+  }
+}
+
+.cuphead-model__frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  border: none;
+}
+
+/* 控制条 - 在模型下方、文字上方 */
+.cuphead-model__film-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) 0;
+  z-index: var(--z-sticky);
+  gap: 8px;
+}
+
+/* 箭头按钮 */
+.cuphead-model__arrow {
+  width: 288px;
+  height: 144px;
+  border: 2px solid var(--color-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--color-cream);
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  font-family: inherit;
+}
+
+.cuphead-model__arrow:hover {
+  background-color: rgba(243, 234, 215, 0.2);
+  transform: scale(1.05);
+}
+
+.cuphead-model__arrow:active {
+  transform: scale(0.95);
+}
+
+.cuphead-model__arrow--left::before {
+  content: '←';
+  font-weight: bold;
+}
+
+.cuphead-model__arrow--right::before {
+  content: '→';
+  font-weight: bold;
+}
+
+/* 播放按钮 */
+.cuphead-model__play-btn {
+  width: 50px;
+  height: 24px;
+  border: 2px solid var(--color-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--color-cream);
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  font-family: inherit;
+}
+
+.cuphead-model__play-btn:hover {
+  background-color: rgba(243, 234, 215, 0.2);
+  transform: scale(1.05);
+}
+
+.cuphead-model__play-btn:active {
+  transform: scale(0.95);
+}
+
+.cuphead-model__canvas-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: var(--z-base);
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cuphead-model__canvas-wrapper--clickable {
+  cursor: pointer;
+}
+
+.cuphead-model canvas {
+  flex: 1;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0;
+}
+
+.cuphead-model__content {
+  padding: 24px;
+  color: var(--color-cream);
+  text-align: center;
+  background: transparent;
+  position: relative;
+  z-index: var(--z-sticky);
+}

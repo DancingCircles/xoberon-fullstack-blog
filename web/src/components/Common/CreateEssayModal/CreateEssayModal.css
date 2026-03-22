@@ -1,0 +1,263 @@
+/* Create Essay Modal — REACH OUT 风格 */
+
+.create-essay-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-20);
+  overscroll-behavior: contain;
+}
+
+.create-essay-container {
+  background-color: var(--color-cream-bg);
+  max-width: 860px;
+  width: 95%;
+  height: 85vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+/* Close — 右上角简洁 × */
+.create-essay-close {
+  position: absolute;
+  top: var(--space-20);
+  right: var(--space-20);
+  background: none;
+  border: none;
+  color: var(--color-dark-mid);
+  cursor: pointer;
+  padding: var(--space-8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-sticky);
+  transition: color 0.2s;
+}
+
+.create-essay-close:hover {
+  color: var(--color-dark);
+}
+
+/* Scrollable form area */
+.create-essay-form {
+  padding: var(--space-40) var(--space-40) var(--space-24);
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  scrollbar-width: none;
+}
+
+.create-essay-form::-webkit-scrollbar {
+  display: none;
+}
+
+/* Header */
+.create-essay-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.create-essay-heading {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  color: var(--color-dark);
+  margin: 0;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.create-essay-hint {
+  font-size: var(--text-sm);
+  color: rgba(46, 51, 58, 0.5);
+}
+
+/* Author row */
+.create-essay-author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  padding: var(--space-16) 0;
+  border-top: 2px solid var(--color-dark);
+  border-bottom: 2px solid var(--color-dark);
+}
+
+.create-essay-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-dark);
+}
+
+.create-essay-author-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-md);
+  color: var(--color-dark);
+  text-transform: uppercase;
+}
+
+/* 输入框覆写：用 body 字体 + 正常大小写 */
+.create-essay-form .xo-input,
+.create-essay-form .xo-textarea {
+  font-family: var(--font-body);
+  text-transform: none;
+  font-size: var(--text-md);
+}
+
+/* Fields */
+.create-essay-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.create-essay-label {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-dark);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* 标题输入 — 大号 */
+.create-essay-title-input {
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+  letter-spacing: 0.02em;
+}
+
+.create-essay-excerpt-input,
+.create-essay-content-input {
+  resize: none;
+}
+
+.create-essay-content-input {
+  line-height: 1.8;
+  min-height: 200px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Footer actions */
+.create-essay-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-20) var(--space-40);
+  border-top: 2px solid var(--color-dark);
+  flex-shrink: 0;
+}
+
+.create-essay-char-count {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  color: rgba(46, 51, 58, 0.4);
+  text-transform: uppercase;
+}
+
+.create-essay-char-count--inline {
+  text-align: right;
+  margin-top: var(--space-4);
+}
+
+.create-essay-char-count--limit {
+  color: var(--color-accent);
+}
+
+.create-essay-actions {
+  display: flex;
+  gap: var(--space-12);
+}
+
+.create-essay-cancel-btn,
+.create-essay-submit-btn {
+  width: auto;
+  padding: var(--space-12) var(--space-32);
+  font-size: var(--text-md);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .create-essay-container {
+    height: 95vh;
+    width: 98%;
+  }
+
+  .create-essay-form {
+    padding: var(--space-24) var(--space-24) var(--space-20);
+    gap: var(--space-20);
+  }
+
+  .create-essay-footer {
+    padding: var(--space-16) var(--space-24);
+  }
+
+  .create-essay-heading {
+    font-size: 2rem;
+  }
+
+  .create-essay-title-input {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .create-essay-overlay {
+    padding: 0;
+  }
+
+  .create-essay-container {
+    width: 100%;
+    height: var(--vh-full);
+    max-width: none;
+    max-height: none;
+  }
+
+  .create-essay-form {
+    padding: var(--space-20) var(--space-16) var(--space-16);
+  }
+
+  .create-essay-close {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .create-essay-footer {
+    flex-direction: column;
+    gap: var(--space-12);
+    align-items: stretch;
+    padding: var(--space-16);
+  }
+
+  .create-essay-char-count {
+    text-align: center;
+  }
+
+  .create-essay-actions {
+    justify-content: stretch;
+  }
+
+  .create-essay-cancel-btn,
+  .create-essay-submit-btn {
+    flex: 1;
+    text-align: center;
+    min-height: 44px;
+  }
+
+  .create-essay-heading {
+    font-size: 1.8rem;
+  }
+}

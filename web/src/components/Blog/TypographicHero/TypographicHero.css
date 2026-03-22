@@ -1,0 +1,109 @@
+.typographic-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 0.8;
+  color: var(--color-text);
+  width: 100%;
+  max-width: 98vw;
+  margin-left: auto;
+  margin-right: auto;
+  padding: var(--space-32) 1vw;
+  user-select: none;
+  perspective: 1000px;
+  cursor: default;
+  position: relative;
+}
+
+.hero-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.6em;
+  width: 100%;
+}
+
+.word-wrapper {
+  display: inline-block;
+  transform-style: preserve-3d;
+}
+
+.hero-char {
+  display: inline-block;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Font Types */
+.type-display {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+}
+
+.type-script {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+/* Accent Color (红色强调) */
+.word-accent.type-display {
+  color: var(--color-accent);
+}
+
+.word-accent.type-script {
+  color: var(--color-accent);
+}
+
+/* Size Utilities */
+.size-xs { 
+  font-size: clamp(1rem, 2vw, 1.8rem); 
+  transform: translateY(-0.2em);
+}
+.size-sm { font-size: clamp(1.4rem, 3.5vw, 3rem); }
+.size-md { font-size: clamp(2rem, 5vw, 4.5rem); }
+.size-lg { font-size: clamp(2.8rem, 7vw, 6.5rem); }
+.size-xl { font-size: clamp(3.5rem, 9vw, 8rem); }
+.size-huge { 
+  font-size: clamp(4.5rem, 14vw, 12rem); 
+  line-height: 0.9;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .typographic-hero {
+    line-height: 0.9;
+  }
+  
+  .hero-line {
+    gap: 0.3em;
+  }
+}
+
+@media (max-width: 600px) {
+  .typographic-hero {
+    padding: var(--space-16) 1vw;
+    line-height: 0.85;
+  }
+
+  .hero-line {
+    gap: 0.2em;
+  }
+
+  .size-xs { font-size: clamp(0.8rem, 1.6vw, 1.4rem); }
+  .size-sm { font-size: clamp(1.1rem, 2.8vw, 2.2rem); }
+  .size-md { font-size: clamp(1.6rem, 4vw, 3.2rem); }
+  .size-lg { font-size: clamp(2.2rem, 5.5vw, 4.5rem); }
+  .size-xl { font-size: clamp(2.8rem, 7vw, 5.5rem); }
+  .size-huge { font-size: clamp(3.5rem, 11vw, 8rem); }
+}

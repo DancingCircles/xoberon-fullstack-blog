@@ -1,0 +1,114 @@
+.data-table__wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--color-border);
+}
+
+.data-table__head {
+  background-color: var(--color-bg-deep);
+}
+
+.data-table__th {
+  padding: var(--space-16) var(--space-20);
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.data-table__body .data-table__row {
+  transition: background-color 0.15s ease;
+}
+
+.data-table__body .data-table__row:hover {
+  background-color: var(--color-bg-mid);
+}
+
+.data-table__row--clickable {
+  cursor: pointer;
+}
+
+.data-table__td {
+  padding: var(--space-16) var(--space-20);
+  font-size: var(--text-md);
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.data-table__empty {
+  padding: var(--space-64) var(--space-16);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--text-md);
+}
+
+.data-table__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-16);
+  padding: var(--space-16) 0;
+}
+
+.data-table__page-btn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-dim);
+  padding: var(--space-8) var(--space-20);
+  font-size: var(--text-sm);
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.data-table__page-btn:hover:not(:disabled) {
+  color: var(--color-cream);
+  border-color: var(--color-cream);
+}
+
+.data-table__page-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.data-table__page-info {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ── Expanded row ── */
+
+.data-table__row--expanded {
+  background-color: var(--color-bg-mid);
+}
+
+.data-table__row--expanded > .data-table__td {
+  border-bottom: none;
+}
+
+.data-table__expand-row {
+  background-color: var(--color-bg-mid);
+}
+
+.data-table__expand-cell {
+  padding: 0 var(--space-20) var(--space-24) var(--space-20);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Column modifier: compact padding for icon/avatar columns */
+.data-table__th.dt-col--compact,
+.data-table__td.dt-col--compact {
+  padding: var(--space-8) var(--space-8);
+  text-align: center;
+}

@@ -1,0 +1,11 @@
+.admin-layout {
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+.admin-layout__content {
+  margin-left: var(--admin-sidebar-w);
+  min-height: 100vh;
+  padding: var(--space-32);
+  overflow-x: hidden;
+}

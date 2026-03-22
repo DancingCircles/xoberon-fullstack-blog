@@ -1,0 +1,327 @@
+.page--about {
+  background-color: var(--color-bg);
+}
+
+/* ========================================
+   Section - Intro
+   ======================================== */
+.about-intro {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg);
+  padding: 0 var(--space-48);
+}
+
+.about-intro__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 14vw, 13rem);
+  line-height: 0.95;
+  text-transform: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  letter-spacing: -0.03em;
+}
+
+.about-intro__line {
+  display: block;
+}
+
+.about-intro__line--dim {
+  color: var(--color-text);
+  font-weight: 800;
+}
+
+.about-intro__line--bold {
+  color: var(--color-text);
+  font-weight: 900;
+}
+
+.about-intro__line--red {
+  color: var(--color-accent);
+}
+
+.about-intro__dot {
+  color: var(--color-success);
+}
+
+@media (max-width: 768px) {
+  .about-intro {
+    padding: 0 var(--space-24);
+  }
+
+  .about-intro__title {
+    font-size: clamp(3.5rem, 12vw, 7rem);
+  }
+}
+
+@media (max-width: 600px) {
+  .about-intro__title {
+    font-size: clamp(2.5rem, 14vw, 4.5rem);
+  }
+}
+
+/* ========================================
+   Section - 随笔 (完整复用 Blog LATEST ARTICLES 排版)
+   ======================================== */
+.about-essay {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 分割线标题 — 同 Blog 的 section-divider */
+.about-essay__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--space-64) 0 var(--space-32);
+  position: relative;
+  padding: 0 var(--space-24);
+}
+
+.about-essay__divider::before,
+.about-essay__divider::after {
+  content: '';
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  flex: 1;
+  max-width: 200px;
+}
+
+.about-essay__divider-text {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-text-dim);
+  margin: 0 var(--space-24);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* 筛选栏 — 同 Blog 的 blog-filter-section */
+.about-essay__filter-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-32);
+  margin-bottom: var(--space-48);
+  padding: 0 var(--space-24);
+  max-width: var(--layout-max);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+/* 行容器 — 提供整体 padding 和 max-width */
+.about-essay__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-40);
+  padding: 0 var(--space-48) var(--space-96);
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* 每行滚动视口 — 裁剪超出的卡片 */
+.about-essay__row-viewport {
+  overflow: hidden;
+  user-select: none;
+  container-type: inline-size;
+  touch-action: pan-y;
+}
+
+/* 每行卡片轨道 */
+.about-essay__row-track {
+  display: flex;
+  gap: var(--space-40);
+  will-change: transform;
+}
+
+/* 空状态 — 同 Blog 的 blog-empty-state */
+.essay-empty-state {
+  text-align: center;
+  padding: var(--space-80) 0;
+  color: var(--color-text-dim);
+}
+
+.essay-empty-state h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-16);
+  color: var(--color-text);
+}
+
+/* ========================================
+   随笔卡片 — 复用 Blog Card 视觉风格
+   ======================================== */
+.essay-card {
+  background-color: var(--color-cream-bg);
+  border-radius: 0;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.12);
+  padding: var(--space-32);
+  width: calc((100cqi - var(--space-40) * 2) / 3);
+  min-width: calc((100cqi - var(--space-40) * 2) / 3);
+  height: 520px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.essay-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.essay-card:hover .essay-card__read {
+  gap: var(--space-12);
+  color: var(--color-accent);
+}
+
+/* Header: 头像 + 昵称 — 参考 BlogCard */
+.essay-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  margin-bottom: var(--space-16);
+}
+
+.essay-card__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-cream-bg);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.essay-card__author {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-dark);
+}
+
+/* 元信息（日期 + 点赞） */
+.essay-card__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--text-sm);
+  color: var(--color-dark-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding-bottom: var(--space-16);
+  margin-bottom: var(--space-20);
+}
+
+.essay-card__likes {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--color-accent);
+}
+
+/* 标题 */
+.essay-card__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+  color: var(--color-accent);
+  margin: 0 0 var(--space-20);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+
+/* 摘要 — 单行截断 */
+.essay-card__excerpt {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-dark-text-muted);
+  line-height: 1.4;
+  margin: 0 0 var(--space-12);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: break-word;
+}
+
+/* 正文内容 — 最多四行截断 */
+.essay-card__content {
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  color: var(--color-dark-text);
+  line-height: 1.6;
+  margin: 0 0 var(--space-24);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-height: calc(1.6em * 4);
+  text-overflow: ellipsis;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Read Essay 链接 — 复用 Blog 的 read-more 风格 */
+.essay-card__read {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  color: var(--color-dark);
+  font-weight: 700;
+  font-size: var(--text-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: gap 0.3s ease, color 0.3s ease;
+  margin-top: auto;
+}
+
+/* ========================================
+   随笔卡片 Responsive
+   ======================================== */
+@media (max-width: 768px) {
+  .about-essay__rows {
+    gap: var(--space-24);
+    padding: 0 var(--space-24) var(--space-64);
+  }
+
+  .about-essay__row-track {
+    gap: var(--space-24);
+  }
+
+  /* 平板：每次显示 2 张 */
+  .essay-card {
+    width: calc((100cqi - var(--space-24)) / 2);
+    min-width: calc((100cqi - var(--space-24)) / 2);
+    padding: var(--space-24);
+    height: 480px;
+  }
+}
+
+@media (max-width: 600px) {
+  .essay-card__title {
+    font-size: clamp(1.3rem, 5vw, 1.6rem);
+  }
+
+  /* 手机：每次显示 1 张 */
+  .essay-card {
+    width: 100cqi;
+    min-width: 100cqi;
+    padding: var(--space-20);
+    height: 440px;
+  }
+}

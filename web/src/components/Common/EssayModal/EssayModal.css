@@ -1,0 +1,194 @@
+/* 遮罩层 — 复用 BlogModal 风格 */
+.essay-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-20);
+  overscroll-behavior: contain;
+}
+
+/* 容器 — 与 BlogModal 同等尺寸，固定高度可滚动 */
+.essay-modal-container {
+  background: var(--color-cream);
+  border-radius: 0;
+  max-width: 1000px;
+  width: 95%;
+  height: 85vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* 关闭按钮 — 简洁 × */
+.essay-modal-close {
+  position: absolute;
+  top: var(--space-20);
+  right: var(--space-20);
+  background: none;
+  border: none;
+  color: var(--color-dark-mid);
+  cursor: pointer;
+  padding: var(--space-8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-sticky);
+  transition: color 0.2s;
+}
+
+.essay-modal-close:hover {
+  color: var(--color-dark);
+}
+
+/* 内容滚动区 — flex:1 撑满容器，溢出可滚动 */
+.essay-modal-scroll {
+  padding: var(--space-64) var(--space-64) var(--space-48);
+  overflow-y: scroll;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.essay-modal-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* 顶栏：头像 + 日期 + 点赞 */
+.essay-modal-topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  padding-bottom: var(--space-24);
+  border-bottom: 1px solid rgba(29, 33, 40, 0.1);
+  margin-bottom: var(--space-24);
+}
+
+.essay-modal-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.essay-modal-date {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: rgba(29, 33, 40, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.essay-modal-topbar-right {
+  margin-left: auto;
+}
+
+.modal-delete-btn {
+  position: absolute;
+  bottom: var(--space-8);
+  right: var(--space-8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--color-dark-text-muted);
+  cursor: pointer;
+  padding: var(--space-4);
+  transition: color 0.2s ease;
+  z-index: var(--z-sticky);
+}
+
+.modal-delete-btn:hover {
+  color: var(--color-accent);
+}
+
+/* 标题 */
+.essay-modal-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin: 0 0 var(--space-40);
+  line-height: 1.2;
+  color: var(--color-accent);
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 正文 */
+.essay-modal-body {
+  line-height: 1.9;
+  color: var(--color-bg);
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.essay-modal-body p {
+  margin: 0 0 var(--space-24);
+}
+
+.essay-modal-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+@media (max-width: 768px) {
+  .essay-modal-overlay {
+    padding: var(--space-8);
+  }
+
+  .essay-modal-container {
+    height: 95vh;
+    width: 98%;
+  }
+
+  .essay-modal-close {
+    top: var(--space-12);
+    right: var(--space-12);
+  }
+
+  .essay-modal-scroll {
+    padding: var(--space-48) var(--space-24) var(--space-32);
+  }
+
+  .essay-modal-title {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .essay-modal-overlay {
+    padding: 0;
+  }
+
+  .essay-modal-container {
+    height: var(--vh-full);
+    width: 100%;
+  }
+
+  .essay-modal-close {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .essay-modal-scroll {
+    padding: var(--space-40) var(--space-16) var(--space-24);
+  }
+
+  .essay-modal-title {
+    font-size: 1.5rem;
+  }
+}

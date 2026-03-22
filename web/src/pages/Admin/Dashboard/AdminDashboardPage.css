@@ -1,0 +1,76 @@
+.adp__title {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  color: var(--color-cream);
+  margin: 0 0 var(--space-32) 0;
+  letter-spacing: 0.02em;
+}
+
+.adp__stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-20);
+  margin-bottom: var(--space-48);
+}
+
+.adp__section-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  color: var(--color-cream);
+  margin: 0 0 var(--space-20) 0;
+  letter-spacing: 0.02em;
+}
+
+.adp-time {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.adp-badge {
+  display: inline-block;
+  padding: var(--space-4) var(--space-12);
+  font-size: var(--text-sm);
+  font-family: var(--font-body);
+  border: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.adp-badge--new_post,
+.adp-badge--new_essay {
+  color: var(--color-cream);
+}
+
+.adp-badge--new_user {
+  color: var(--color-success);
+}
+
+.adp-badge--new_contact {
+  color: var(--color-text-dim);
+}
+
+.adp-badge--review_approved {
+  color: var(--color-badge-approved);
+}
+
+.adp-badge--review_rejected {
+  color: var(--color-badge-rejected);
+}
+
+@media (max-width: 1200px) {
+  .adp__stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .adp__stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .adp__stats {
+    grid-template-columns: 1fr;
+  }
+}

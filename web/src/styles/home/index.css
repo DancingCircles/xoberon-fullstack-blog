@@ -1,0 +1,9 @@
+/* SharedSections - 共享的页面布局样式汇总 */
+
+@import './page-home.css';
+@import './hero.css';
+@import './work-section.css';
+@import './clients-section.css';
+@import './process-section.css';
+@import './team-section.css';
+@import './cta-section.css';

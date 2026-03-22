@@ -1,0 +1,119 @@
+.toast-container {
+  position: fixed;
+  top: var(--space-24);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  pointer-events: none;
+}
+
+.xo-toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-20);
+  border: 2px solid var(--color-bg);
+  background-color: var(--color-cream-bg);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-bg);
+  pointer-events: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+}
+
+.xo-toast--success {
+  border-color: var(--color-success);
+}
+
+.xo-toast--success .xo-toast-icon {
+  color: var(--color-success);
+}
+
+.xo-toast--error {
+  border-color: var(--color-accent);
+}
+
+.xo-toast--error .xo-toast-icon {
+  color: var(--color-accent);
+}
+
+.xo-toast--warning {
+  border-color: var(--color-accent);
+}
+
+.xo-toast--warning .xo-toast-icon {
+  color: var(--color-accent);
+}
+
+.xo-toast--info {
+  border-color: var(--color-success);
+}
+
+.xo-toast--info .xo-toast-icon {
+  color: var(--color-success);
+}
+
+.xo-toast-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.xo-toast-message {
+  flex: 1;
+}
+
+.xo-toast-action {
+  background: none;
+  border: 1px solid var(--color-bg);
+  color: var(--color-bg);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: var(--space-4) var(--space-12);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.xo-toast-action:hover {
+  background-color: var(--color-bg);
+  color: var(--color-cream-bg);
+}
+
+.xo-toast-close {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: rgba(46, 51, 58, 0.4);
+  cursor: pointer;
+  padding: var(--space-4);
+  transition: color 0.2s;
+}
+
+.xo-toast-close:hover {
+  color: var(--color-bg);
+}
+
+@media (max-width: 600px) {
+  .toast-container {
+    top: var(--space-12);
+    left: var(--space-12);
+    right: var(--space-12);
+    transform: none;
+  }
+
+  .xo-toast {
+    width: 100%;
+  }
+}

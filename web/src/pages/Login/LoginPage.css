@@ -1,0 +1,293 @@
+/*
+ * 登录页 — 眼睛跟随卡片
+ * 表单控件使用 xo-* 全局类，此处仅保留登录页特有覆写
+ */
+
+.page--login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg);
+  padding: var(--space-24);
+}
+
+/* ===== Card ===== */
+
+.lp-card {
+  width: 458px;
+  background-color: var(--color-cream-bg);
+  overflow: hidden;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lp-card--wide {
+  width: 860px;
+}
+
+/* ===== 上半：眼睛区域 ===== */
+
+.lp-eyes-section {
+  margin: 18px 18px 0;
+  background-color: var(--color-bg);
+  overflow: hidden;
+  height: 432px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lp-eyes-inner {
+  display: flex;
+  gap: 3.5px;
+}
+
+.lp-eye {
+  width: 204px;
+  height: 204px;
+  background-color: var(--color-cream);
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+}
+
+.lp-pupil {
+  width: 76px;
+  height: 76px;
+  background-color: var(--color-dark);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -38px 0 0 -38px;
+  transition: transform 0.08s ease-out;
+  pointer-events: none;
+}
+
+.lp-pupil::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 16px;
+  height: 16px;
+  background: var(--color-white);
+  border-radius: 50%;
+}
+
+.lp-eyelid {
+  position: absolute;
+  top: 0;
+  left: -4px;
+  right: -4px;
+  height: 0%;
+  background-color: var(--color-cream);
+  border-bottom: 2px solid var(--color-cream-muted);
+  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: var(--z-base);
+  border-radius: 0 0 50% 50%;
+}
+
+.lp-eyelid--shut {
+  height: 58%;
+}
+
+/* ===== 下半：表单区域 ===== */
+
+.lp-bottom {
+  padding: var(--space-24) 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.lp-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.lp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-12);
+}
+
+/* 登录页输入框尺寸缩小覆写 */
+.lp-input {
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  padding: var(--space-12) var(--space-16);
+  text-transform: none;
+  height: var(--space-48);
+  box-sizing: border-box;
+}
+
+.lp-pw-wrap {
+  position: relative;
+}
+
+.lp-pw-wrap .lp-input {
+  padding-right: var(--space-40);
+}
+
+.lp-pw-toggle {
+  position: absolute;
+  right: var(--space-12);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(46, 51, 58, 0.5);
+  cursor: pointer;
+  padding: var(--space-4);
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.lp-pw-toggle:hover {
+  color: var(--color-dark);
+}
+
+/* ===== 验证码 ===== */
+
+.lp-captcha {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-8);
+}
+
+.lp-captcha-canvas {
+  flex-shrink: 0;
+  border: 2px solid var(--color-bg);
+  border-radius: 0;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  width: 140px;
+  height: var(--space-48);
+  box-sizing: border-box;
+  object-fit: contain;
+}
+
+.lp-captcha-canvas:hover {
+  opacity: 0.75;
+}
+
+.lp-captcha-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  opacity: 0.5;
+}
+
+.lp-captcha-input {
+  flex: 1;
+  min-width: 0;
+  letter-spacing: 0.15em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 登录页按钮尺寸覆写 */
+.lp-submit {
+  font-size: var(--text-lg);
+}
+
+/* Google 按钮 */
+.lp-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  font-size: var(--text-md);
+}
+
+.lp-google svg {
+  flex-shrink: 0;
+}
+
+/* 登录/注册切换 */
+.lp-switch {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-dark-mid);
+  margin: 0;
+}
+
+.lp-switch-btn {
+  background: none;
+  border: none;
+  color: var(--color-dark);
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: var(--space-4);
+  font-size: var(--text-sm);
+  transition: opacity 0.2s;
+}
+
+.lp-switch-btn:hover {
+  opacity: 0.6;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 1024px) {
+  .lp-card--wide {
+    width: 100%;
+    max-width: 860px;
+  }
+}
+
+@media (max-width: 600px) {
+  .page--login {
+    padding: var(--space-16);
+  }
+
+  .lp-card {
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .lp-card--wide {
+    max-width: 100%;
+  }
+
+  .lp-eyes-section {
+    margin: 12px 12px 0;
+  }
+
+  .lp-eye {
+    width: 140px;
+    height: 140px;
+  }
+
+  .lp-pupil {
+    width: 52px;
+    height: 52px;
+    margin: -26px 0 0 -26px;
+  }
+
+  .lp-pupil::after {
+    width: 12px;
+    height: 12px;
+    top: 7px;
+    right: 9px;
+  }
+
+  .lp-bottom {
+    padding: var(--space-20) 12px 12px;
+  }
+
+  .lp-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lp-pw-toggle {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

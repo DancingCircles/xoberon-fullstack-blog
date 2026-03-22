@@ -1,0 +1,133 @@
+.page--works {
+  background-color: var(--color-bg);
+  min-height: var(--vh-full);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===================== */
+/* Works Hero Section    */
+/* ===================== */
+.works-hero {
+  position: relative;
+  width: 100%;
+  height: var(--vh-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  background: var(--color-bg);
+}
+
+/* Hero Content */
+.works-hero__content {
+  position: relative;
+  z-index: var(--z-front);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 800px;
+  padding: 0 5vw;
+  margin: 0 auto;
+}
+
+/* Title */
+.works-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.works-title .animated-title {
+  font-size: clamp(4rem, 10vw, 10rem);
+  line-height: 0.9;
+}
+
+/* Search Bar Wrapper */
+.works-search-wrapper {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  justify-content: center;
+}
+
+.works-search-wrapper .search-bar {
+  max-width: 500px;
+  width: 100%;
+}
+
+/* Customize Search Bar */
+.works-search-bar {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(243, 234, 215, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 12px 24px;
+  flex-direction: row-reverse; /* Icon on right */
+}
+
+.works-search-bar .search-input {
+  background: transparent;
+  border: none;
+  height: auto;
+  font-size: 1rem;
+  padding: 0;
+  padding-right: 1rem;
+  color: var(--color-cream);
+}
+
+.works-search-bar .search-input::placeholder {
+  color: rgba(243, 234, 215, 0.5);
+}
+
+.works-search-bar .search-icon {
+  margin-right: 0;
+  margin-left: 12px;
+  color: var(--color-text);
+}
+
+.works-search-bar .search-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.works-search-bar:focus-within {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-text-dim);
+}
+
+/* ===================== */
+/* Responsive            */
+/* ===================== */
+@media (max-width: 768px) {
+  .works-title .animated-title {
+    font-size: clamp(3rem, 8vw, 8rem);
+  }
+}
+
+@media (max-width: 600px) {
+  .page--works {
+    overflow-x: hidden;
+  }
+
+  .works-title .animated-title {
+    font-size: clamp(2.5rem, 14vw, 5rem);
+  }
+
+  .works-search-wrapper {
+    max-width: 100%;
+    padding: 0 var(--space-16);
+  }
+
+  .works-search-wrapper .search-bar {
+    max-width: 100%;
+  }
+
+  .works-hero__content {
+    gap: 1.5rem;
+    padding: 0 var(--space-16);
+  }
+}

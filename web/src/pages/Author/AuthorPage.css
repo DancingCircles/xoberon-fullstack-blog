@@ -1,0 +1,222 @@
+.page--author {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding-top: 120px;
+}
+
+.ap-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--space-48) var(--space-80);
+}
+
+/* ── Header ── */
+.ap-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-24);
+  margin-bottom: var(--space-48);
+}
+
+.ap-profile {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-32);
+}
+
+.ap-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.ap-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.ap-name {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.ap-handle {
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  color: var(--color-text-dim);
+  opacity: 0.5;
+}
+
+.ap-bio {
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  color: var(--color-text-dim);
+  margin: var(--space-8) 0 0;
+  line-height: 1.5;
+  max-width: 600px;
+}
+
+/* ── Stats ── */
+.ap-stats {
+  display: flex;
+  gap: var(--space-48);
+  padding-bottom: var(--space-32);
+  margin-bottom: 0;
+}
+
+.ap-stat {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-8);
+}
+
+.ap-stat-num {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.ap-stat-label {
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  color: var(--color-text-dim);
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── 404 ── */
+.ap-not-found {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.ap-not-found h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.ap-not-found p {
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  color: var(--color-text-dim);
+  margin: 0;
+}
+
+/* ── Reuse sr- classes from SearchResultsPage ── */
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .ap-container {
+    padding: 0 var(--space-32) var(--space-64);
+  }
+
+  .ap-avatar {
+    width: 64px;
+    height: 64px;
+  }
+
+  .ap-stats {
+    gap: var(--space-32);
+  }
+}
+
+@media (max-width: 768px) {
+  .page--author {
+    padding-top: 100px;
+  }
+
+  .ap-container {
+    padding: 0 var(--space-20) var(--space-48);
+  }
+
+  .ap-header {
+    margin-bottom: var(--space-32);
+  }
+
+  .ap-profile {
+    gap: var(--space-20);
+  }
+
+  .ap-avatar {
+    width: 56px;
+    height: 56px;
+  }
+
+  .ap-name {
+    font-size: 1.5rem;
+  }
+
+  .ap-bio {
+    font-size: var(--text-md);
+  }
+
+  .ap-stats {
+    gap: var(--space-32);
+    padding-bottom: var(--space-24);
+  }
+
+  .ap-stat-num {
+    font-size: var(--text-2xl);
+  }
+}
+
+.sr-delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--color-text-dim);
+  cursor: pointer;
+  padding: var(--space-4);
+  border-radius: 4px;
+  transition: color 0.2s ease, background 0.2s ease;
+  opacity: 0;
+}
+
+.sr-row:hover .sr-delete-btn {
+  opacity: 1;
+}
+
+.sr-delete-btn:hover {
+  color: var(--color-accent);
+  background: rgba(206, 40, 40, 0.1);
+}
+
+@media (max-width: 600px) {
+  .ap-header {
+    flex-direction: column;
+    gap: var(--space-16);
+  }
+
+  .ap-profile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-16);
+  }
+
+  .ap-stats {
+    gap: var(--space-24);
+  }
+
+  .sr-delete-btn {
+    opacity: 1;
+  }
+}

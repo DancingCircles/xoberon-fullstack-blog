@@ -1,0 +1,351 @@
+/* Work Section - Portfolio Gray Layout */
+
+.section-work {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-64) var(--space-80);
+  overflow: hidden;
+}
+
+/* 网格线背景 - 移除 */
+.section-work__grid {
+  display: none;
+}
+
+/* 从 hero 延伸下来的竖线 */
+.section-work__extend-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 var(--space-80);
+  pointer-events: none;
+  z-index: var(--z-base);
+}
+
+.section-work__extend-lines span {
+  width: 1px;
+  height: 0;
+  background-color: var(--color-border);
+  flex-shrink: 0;
+}
+
+/* 顶部栏 - 隐藏 */
+.section-work__topbar {
+  display: none;
+}
+
+.section-work__topbar-name,
+.section-work__topbar-handle {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-cream);
+  letter-spacing: 0.04em;
+}
+
+/* 照片区域 */
+.section-work__photo {
+  position: absolute;
+  width: clamp(320px, 45vw, 720px);
+  z-index: var(--z-front);
+  overflow: hidden;
+}
+
+.section-work__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.section-work__photo--left {
+  top: 20%;
+  left: 0;
+}
+
+.section-work__photo--right {
+  bottom: 0;
+  right: 0;
+}
+
+/* 大标题 */
+.section-work__title {
+  position: absolute;
+  margin: 0;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  color: var(--color-cream);
+  z-index: var(--z-top);
+  pointer-events: none;
+}
+
+.section-work__title--bottom-left {
+  left: var(--space-80);
+  bottom: 15%;
+  font-size: clamp(3.5rem, 6vw, 7rem);
+  line-height: 0.85;
+}
+
+.section-work__title--top-right {
+  right: var(--space-80);
+  top: 20%;
+  font-size: clamp(3.5rem, 6vw, 7rem);
+  line-height: 0.85;
+}
+
+/* 描述文字 */
+.section-work__desc {
+  position: absolute;
+  font-size: var(--text-md);
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--color-text-dim);
+  max-width: 360px;
+  z-index: var(--z-raised);
+  margin: 0;
+}
+
+.section-work__desc--bottom {
+  left: var(--space-80);
+  bottom: 4%;
+}
+
+.section-work__desc--right {
+  right: var(--space-80);
+  top: 34%;
+  max-width: 320px;
+}
+
+/* 装饰 SVG - 内联跟随标题 */
+.section-work__deco-inline {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.5em;
+  vertical-align: super;
+  margin: 0 var(--space-8);
+  pointer-events: none;
+}
+
+/* 响应式 - 小桌面 */
+@media (max-width: 1200px) {
+  .section-work {
+    padding: var(--space-48) var(--space-48);
+  }
+
+  .section-work__photo {
+    width: clamp(260px, 38vw, 520px);
+  }
+
+  .section-work__title--bottom-left {
+    left: var(--space-48);
+    font-size: clamp(3rem, 5.5vw, 6rem);
+  }
+
+  .section-work__title--top-right {
+    right: var(--space-48);
+    font-size: clamp(3rem, 5.5vw, 6rem);
+  }
+
+  .section-work__desc--bottom {
+    left: var(--space-48);
+    max-width: 320px;
+  }
+
+  .section-work__desc--right {
+    right: var(--space-48);
+    max-width: 280px;
+  }
+
+  .section-work__extend-lines {
+    padding: 0 var(--space-48);
+  }
+}
+
+/* 响应式 - 平板横屏 */
+@media (max-width: 1024px) {
+  .section-work {
+    padding: var(--space-48) var(--space-32);
+  }
+
+  .section-work__photo {
+    width: clamp(220px, 35vw, 380px);
+  }
+
+  .section-work__title--bottom-left {
+    left: var(--space-32);
+    bottom: 18%;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  .section-work__title--top-right {
+    right: var(--space-32);
+    top: 15%;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  .section-work__desc--bottom {
+    left: var(--space-32);
+    bottom: 6%;
+    max-width: 280px;
+    font-size: var(--text-sm);
+  }
+
+  .section-work__desc--right {
+    right: var(--space-32);
+    top: 30%;
+    max-width: 240px;
+    font-size: var(--text-sm);
+  }
+
+  .section-work__extend-lines {
+    padding: 0 var(--space-32);
+  }
+}
+
+/* 响应式 - 平板竖屏 */
+@media (max-width: 768px) {
+  .section-work {
+    padding: var(--space-48) var(--space-24);
+    min-height: 90vh;
+  }
+
+  .section-work__photo {
+    width: clamp(180px, 38vw, 280px);
+  }
+
+  .section-work__photo--left {
+    top: 5%;
+    left: 0;
+  }
+
+  .section-work__photo--right {
+    bottom: 5%;
+    right: 0;
+  }
+
+  .section-work__title--bottom-left {
+    left: var(--space-24);
+    bottom: 22%;
+    font-size: clamp(2rem, 8vw, 3.5rem);
+  }
+
+  .section-work__title--top-right {
+    right: var(--space-24);
+    top: 12%;
+    font-size: clamp(2rem, 8vw, 3.5rem);
+  }
+
+  .section-work__desc--bottom {
+    left: var(--space-24);
+    bottom: 8%;
+    max-width: 55%;
+    font-size: var(--text-sm);
+  }
+
+  .section-work__desc--right {
+    right: var(--space-24);
+    top: 25%;
+    max-width: 42%;
+    font-size: var(--text-sm);
+  }
+
+  .section-work__extend-lines {
+    padding: 0 var(--space-24);
+  }
+}
+
+/* 响应式 - 手机：杂志卡片流 */
+@media (max-width: 600px) {
+  .section-work {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: auto;
+    padding: var(--space-32) var(--space-16);
+    gap: var(--space-24);
+  }
+
+  .section-work__extend-lines {
+    display: none;
+  }
+
+  .section-work__photo {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .section-work__photo--left {
+    top: auto;
+    left: auto;
+    order: 2;
+  }
+
+  .section-work__photo--right {
+    bottom: auto;
+    right: auto;
+    order: 5;
+  }
+
+  .section-work__title {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    pointer-events: auto;
+  }
+
+  .section-work__title--bottom-left {
+    left: auto;
+    bottom: auto;
+    font-size: clamp(2.5rem, 12vw, 4rem);
+    text-align: left;
+    order: 1;
+  }
+
+  .section-work__title--top-right {
+    right: auto;
+    top: auto;
+    font-size: clamp(2.5rem, 12vw, 4rem);
+    text-align: right;
+    order: 4;
+  }
+
+  .section-work__desc {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    max-width: 100%;
+    font-size: var(--text-sm);
+  }
+
+  .section-work__desc--bottom {
+    left: auto;
+    bottom: auto;
+    order: 3;
+  }
+
+  .section-work__desc--right {
+    right: auto;
+    top: auto;
+    max-width: 100%;
+    text-align: right;
+    order: 6;
+  }
+}

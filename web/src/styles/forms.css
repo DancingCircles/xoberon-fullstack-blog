@@ -1,0 +1,270 @@
+/*
+ * XOBERON 统一表单控件
+ * 基于 ContactModal "REACH OUT" 视觉风格
+ * 透明底 / 2px 实线边框 / 无圆角 / Display 字体 / 大写
+ */
+
+/* ===== Input ===== */
+
+.xo-input {
+  width: 100%;
+  background-color: transparent;
+  border: 2px solid var(--color-bg);
+  border-radius: 0;
+  padding: var(--space-16) var(--space-20);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-bg);
+  outline: none;
+  text-transform: uppercase;
+  transition: background-color 0.2s ease;
+}
+
+.xo-input::placeholder {
+  color: rgba(46, 51, 58, 0.5);
+}
+
+.xo-input:focus {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.xo-input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===== Textarea ===== */
+
+.xo-textarea {
+  width: 100%;
+  background-color: transparent;
+  border: 2px solid var(--color-bg);
+  border-radius: 0;
+  padding: var(--space-16) var(--space-20);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-bg);
+  outline: none;
+  text-transform: uppercase;
+  resize: vertical;
+  min-height: 120px;
+  transition: background-color 0.2s ease;
+}
+
+.xo-textarea::placeholder {
+  color: rgba(46, 51, 58, 0.5);
+}
+
+.xo-textarea:focus {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.xo-textarea:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===== Select ===== */
+
+.xo-select {
+  width: 100%;
+  background-color: transparent;
+  border: 2px solid var(--color-bg);
+  border-radius: 0;
+  padding: var(--space-16) var(--space-20);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-bg);
+  outline: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%232e333a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-20) center;
+  padding-right: var(--space-48);
+  transition: background-color 0.2s ease;
+}
+
+.xo-select:focus {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.xo-select:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===== Primary Button ===== */
+
+.xo-btn-primary {
+  width: 100%;
+  background-color: var(--color-accent);
+  color: var(--color-cream-bg);
+  border: none;
+  border-radius: 0;
+  padding: var(--space-16);
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.xo-btn-primary:hover {
+  background-color: var(--color-accent-deep);
+}
+
+.xo-btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===== Secondary Button ===== */
+
+.xo-btn-secondary {
+  width: 100%;
+  background-color: transparent;
+  color: var(--color-bg);
+  border: 2px solid var(--color-bg);
+  border-radius: 0;
+  padding: var(--space-16);
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.xo-btn-secondary:hover {
+  background-color: var(--color-bg);
+  color: var(--color-cream-bg);
+}
+
+.xo-btn-secondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===== Dark theme variants (for dark backgrounds) ===== */
+
+.xo-input--dark {
+  border-color: var(--color-cream);
+  color: var(--color-cream);
+}
+
+.xo-input--dark::placeholder {
+  color: rgba(243, 234, 215, 0.5);
+}
+
+.xo-input--dark:focus {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.xo-textarea--dark {
+  border-color: var(--color-cream);
+  color: var(--color-cream);
+}
+
+.xo-textarea--dark::placeholder {
+  color: rgba(243, 234, 215, 0.5);
+}
+
+.xo-textarea--dark:focus {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.xo-btn-primary--dark {
+  background-color: var(--color-cream);
+  color: var(--color-bg);
+}
+
+.xo-btn-primary--dark:hover {
+  background-color: var(--color-cream-muted);
+}
+
+.xo-btn-secondary--dark {
+  border-color: var(--color-cream);
+  color: var(--color-cream);
+}
+
+.xo-btn-secondary--dark:hover {
+  background-color: var(--color-cream);
+  color: var(--color-bg);
+}
+
+/* ===== Form layout helpers ===== */
+
+.xo-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+}
+
+.xo-form-row {
+  display: flex;
+  gap: var(--space-20);
+}
+
+.xo-form-group {
+  flex: 1;
+}
+
+.xo-label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  color: var(--color-bg);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-8);
+}
+
+.xo-label--dark {
+  color: var(--color-cream);
+}
+
+/* Visually hidden but accessible */
+.xo-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+@media (max-width: 768px) {
+  .xo-form-row {
+    flex-direction: column;
+    gap: var(--space-20);
+  }
+}
+
+@media (max-width: 600px) {
+  .xo-input,
+  .xo-textarea {
+    padding: var(--space-12) var(--space-16);
+    font-size: var(--text-md);
+  }
+
+  .xo-select {
+    padding: var(--space-12) var(--space-16);
+    font-size: var(--text-md);
+    padding-right: var(--space-40);
+    background-position: right var(--space-16) center;
+  }
+
+  .xo-btn-primary,
+  .xo-btn-secondary {
+    min-height: 44px;
+    font-size: var(--text-lg);
+    padding: var(--space-12);
+  }
+}

@@ -1,0 +1,783 @@
+.page--contact {
+  background-color: var(--color-bg);
+  min-height: var(--vh-full);
+  --cp-split-overlap: 25px;
+}
+
+.cp-rep-section {
+  width: 100%;
+  min-height: var(--vh-full);
+  display: flex;
+  align-items: flex-start;
+  padding: clamp(140px, 18vh, 240px) clamp(40px, 6vw, 100px) clamp(60px, 8vh, 120px);
+  gap: clamp(60px, 8vw, 160px);
+}
+
+.cp-rep-left {
+  flex: 0 0 clamp(120px, 14vw, 200px);
+  padding-top: var(--space-8);
+}
+
+.cp-rep-label {
+  font-family: var(--font-body);
+  font-size: clamp(0.65rem, 0.85vw, 0.8rem);
+  font-weight: 500;
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.cp-rep-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(60px, 6vh, 100px);
+}
+
+.cp-rep-region {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+.cp-rep-region-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-weight: 900;
+  font-style: italic;
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.cp-rep-region-company {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2vw, 1.6rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.cp-rep-divider {
+  border: none;
+  height: 2px;
+  background-color: var(--color-border);
+  margin: 0 calc(-1 * clamp(40px, 6vw, 100px)) 0 0;
+}
+
+.cp-rep-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-top: var(--space-16);
+}
+
+.cp-rep-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.cp-rep-name {
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 1vw, 0.95rem);
+  font-weight: 600;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cp-rep-role {
+  font-family: var(--font-body);
+  font-size: clamp(0.75rem, 0.9vw, 0.85rem);
+  font-weight: 500;
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cp-rep-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-4);
+}
+
+.cp-rep-email {
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 1vw, 0.95rem);
+  font-weight: 500;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.cp-rep-email:hover {
+  color: var(--color-accent);
+}
+
+.cp-rep-phone {
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 1vw, 0.95rem);
+  font-weight: 500;
+  color: var(--color-text-dim);
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 768px) {
+  .cp-rep-section {
+    flex-direction: column;
+    padding: 100px var(--space-24) var(--space-48);
+    gap: var(--space-40);
+  }
+
+  .cp-rep-left {
+    padding-top: 0;
+  }
+
+  .cp-rep-region-title {
+    font-size: clamp(2.5rem, 12vw, 4rem);
+  }
+
+  .cp-rep-region-company {
+    font-size: clamp(0.9rem, 3.5vw, 1.2rem);
+  }
+
+  .cp-rep-row {
+    flex-direction: column;
+    gap: var(--space-12);
+  }
+
+  .cp-rep-contact {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .cp-rep-region-title {
+    font-size: clamp(2rem, 14vw, 3.5rem);
+  }
+}
+
+/* ==============================================
+   第二屏：Statement（左右分栏）
+   ============================================== */
+
+.cp-statement {
+  position: relative;
+  min-height: 240vh;
+  display: flex;
+  align-items: flex-start;
+  background-color: var(--color-bg);
+  z-index: var(--z-base);
+}
+
+.cp-statement-left {
+  flex: 1;
+  height: var(--vh-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(48px, 7vh, 100px) clamp(36px, 5vw, 72px);
+  background-color: var(--color-bg);
+}
+
+.cp-statement-right {
+  flex: 1;
+  height: var(--vh-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(40px, 6vh, 80px);
+  margin-left: calc(-1 * var(--cp-split-overlap));
+}
+
+.cp-statement-portal-wrapper {
+  position: absolute;
+  top: 132vh;
+  right: 14%;
+  width: min(620px, 50vw);
+  cursor: pointer;
+}
+
+.cp-statement-portal-visual {
+  position: relative;
+  width: 100%;
+  will-change: transform;
+}
+
+.cp-statement-portal-rect {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: var(--color-cream-bg);
+  overflow: hidden;
+}
+
+.cp-statement-portal-mover {
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+.cp-statement-portal-lottie {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.cp-statement-staircase {
+  position: absolute;
+  top: calc(var(--vh-full) - 25px);
+  left: 0;
+  width: 100vw;
+  height: 50vh;
+  pointer-events: none;
+  display: block;
+  overflow: visible;
+}
+
+.cp-statement-hero-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  line-height: 0.85;
+}
+
+.cp-statement-hero-line {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 10vw, 10rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--color-cream);
+  will-change: transform, opacity;
+}
+
+.cp-statement-lottie {
+  width: 80%;
+  max-width: 450px;
+  height: auto;
+}
+
+/* ==============================================
+   新加的悬浮装饰标题和线条 (依据截图红色标记)
+   ============================================== */
+
+.cp-floating-title {
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 7vw, 8rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  pointer-events: none;
+}
+
+.cp-floating-title--top-right {
+  top: 132vh;
+  right: calc(14% - 2.5rem);
+  height: calc(min(620px, 50vw) * 9 / 16);
+  /* 和矩形高度(16:9)保持一致 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  font-size: clamp(0.75rem, 1.2vw, 1.1rem);
+  color: var(--color-cream-bg);
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.cp-floating-title--bottom-left {
+  top: 215vh;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 0 clamp(16px, 2vw, 32px);
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.cp-ft-row {
+  line-height: 0.85;
+}
+
+.cp-ft-red {
+  color: var(--color-accent);
+}
+
+.cp-ft-cream {
+  color: var(--color-cream-bg);
+}
+
+.cp-ft-desc {
+  display: none;
+}
+
+.cp-floating-line {
+  position: absolute;
+  top: 150vh;
+  left: 0;
+  width: 100vw;
+  height: 50vh;
+  pointer-events: none;
+  display: block;
+  overflow: visible;
+}
+
+
+  .cp-roster-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: var(--z-raised);
+  }
+
+  .cp-roster-btn--desktop {
+    position: absolute;
+    left: clamp(80px, 12vw, 200px);
+    top: 55%;
+    width: 140px;
+    height: 140px;
+  }
+
+  .cp-roster-btn--footer {
+    position: relative;
+    width: 140px;
+    height: 140px;
+  }
+
+.cp-roster-btn-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+  font-size: 0;
+}
+
+.cp-btn-base {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  z-index: var(--z-front);
+  pointer-events: none;
+  display: block;
+}
+
+.cp-btn-top-container {
+  position: absolute;
+  top: 6%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-base);
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  line-height: 0;
+}
+
+.cp-btn-top {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.cp-roster-btn:hover .cp-btn-top-container {
+  transform: translateY(3px);
+}
+
+.cp-roster-btn:active .cp-btn-top-container {
+  transform: translateY(10px);
+}
+
+.cp-btn-star {
+  position: absolute;
+  pointer-events: none;
+  z-index: var(--z-top);
+}
+
+.cp-btn-star--1 {
+  top: -16px;
+  left: -16px;
+  width: 24px;
+  height: 24px;
+  animation: cp-float-left 3s ease-in-out infinite;
+}
+
+.cp-btn-star--2 {
+  top: 8px;
+  right: -24px;
+  width: 40px;
+  height: 40px;
+  animation: cp-float-right 3.5s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+@keyframes cp-float-left {
+  0% {
+    opacity: 0;
+    transform: translate(24px, 32px) scale(0.5) rotate(0deg);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-16px, -40px) scale(1) rotate(360deg);
+  }
+}
+
+@keyframes cp-float-right {
+  0% {
+    opacity: 0;
+    transform: translate(-24px, 32px) scale(0.5) rotate(0deg);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(16px, -40px) scale(1.2) rotate(-360deg);
+  }
+}
+
+@media (max-width: 1024px) {
+  .cp-floating-title--bottom-left {
+    font-size: clamp(2.5rem, 5.5vw, 6rem);
+  }
+
+  .cp-roster-btn {
+    left: auto;
+    width: 110px;
+    height: 110px;
+  }
+  
+  .cp-roster-btn--desktop {
+    left: clamp(40px, 6vw, 100px);
+    width: 110px;
+    height: 110px;
+  }
+  
+  .cp-roster-btn--footer {
+    width: 110px;
+    height: 110px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cp-statement {
+    flex-direction: column;
+    min-height: auto;
+    padding-top: var(--space-64);
+  }
+
+  .cp-statement-left {
+    min-height: auto;
+    height: auto;
+    padding: var(--space-32) var(--space-16) 0;
+  }
+  
+  .cp-statement-right {
+    flex: none;
+    height: auto;
+    min-height: auto;
+    width: 100%;
+    margin-left: 0;
+    padding: var(--space-16);
+  }
+
+  .cp-statement-staircase {
+    position: static;
+    display: block;
+    width: 100%;
+    height: 50vw;
+    margin-top: var(--space-16);
+  }
+
+  .cp-statement-hero-line {
+    font-size: clamp(3rem, 12vw, 5rem);
+  }
+
+  .cp-statement-lottie {
+    width: 70%;
+    max-width: none;
+  }
+
+  .cp-floating-title--bottom-left {
+    font-size: clamp(2rem, 8vw, 4.5rem);
+  }
+
+  .cp-floating-line {
+    top: 150vh;
+    height: 50vw;
+  }
+
+  .cp-roster-btn {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    width: 110px;
+    height: 110px;
+    margin-top: var(--space-24);
+  }
+}
+
+@media (max-width: 600px) {
+  .cp-statement-left,
+  .cp-statement-right {
+    min-height: auto;
+    padding: var(--space-32) var(--space-16);
+  }
+
+  .cp-statement-right {
+    align-items: center;
+  }
+
+  .cp-statement-lottie {
+    width: 90%;
+  }
+
+  .cp-statement-hero-line {
+    font-size: clamp(2.5rem, 14vw, 4rem);
+    text-align: center;
+  }
+
+  .cp-floating-title--top-right {
+    display: none;
+  }
+
+  .cp-floating-title--bottom-left {
+    font-size: clamp(1.8rem, 10vw, 3.5rem);
+  }
+
+  .cp-statement-staircase {
+    display: none;
+  }
+
+  .cp-floating-line {
+    display: none;
+  }
+
+  .cp-statement-portal-wrapper {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 100%;
+    margin-top: var(--space-16);
+  }
+
+  .cp-roster-btn {
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    width: 80px;
+    height: 80px;
+    margin-top: var(--space-16);
+  }
+
+  .cp-roster-btn--footer {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* ==============================================
+   第四屏：Roster / Schedule
+   ============================================== */
+
+.cp-roster {
+  position: relative;
+  min-height: var(--vh-full);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(60px, 8vh, 120px) clamp(40px, 6vw, 100px) clamp(30px, 4vh, 60px);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+.cp-roster-inner {
+  display: flex;
+  gap: clamp(40px, 6vw, 120px);
+  flex: 1;
+  align-items: stretch;
+}
+
+.cp-roster-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 6.5vw, 7.5rem);
+  font-weight: 900;
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.cp-roster-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: var(--space-8);
+  perspective: 800px;
+}
+
+.cp-roster-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: var(--space-16);
+  padding-bottom: var(--space-12);
+  border-bottom: 1px solid rgba(243, 234, 215, 0.2);
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 1vw, 1.05rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text-dim);
+}
+
+.cp-roster-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: var(--space-16);
+  align-items: baseline;
+  padding: clamp(18px, 2.5vh, 32px) 0;
+  border-bottom: 1px solid rgba(243, 234, 215, 0.08);
+}
+
+.cp-roster-row--highlight {
+  background: none;
+  font-weight: 800;
+  border-bottom: none;
+}
+
+.cp-roster-name {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 1.1vw, 1.15rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
+.cp-roster-role {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 1.1vw, 1.15rem);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-dim);
+}
+
+.cp-roster-time {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 1.1vw, 1.15rem);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-text-dim);
+  text-align: right;
+  min-width: 40px;
+}
+
+.cp-roster-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-top: clamp(24px, 4vh, 48px);
+}
+
+.cp-roster-footer-text {
+  display: flex;
+  gap: var(--space-24);
+  font-family: var(--font-body);
+  font-size: clamp(0.55rem, 0.65vw, 0.7rem);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-dim);
+  opacity: 0.5;
+}
+
+@media (max-width: 1024px) {
+  .cp-roster-inner {
+    flex-direction: column;
+    gap: clamp(24px, 4vh, 48px);
+  }
+
+  .cp-roster-title {
+    font-size: clamp(2.5rem, 10vw, 4rem);
+  }
+
+  .cp-roster-header,
+  .cp-roster-row {
+    grid-template-columns: 1.2fr 1fr auto;
+  }
+
+  .cp-roster-footer {
+    flex-direction: row;
+    gap: var(--space-8);
+    align-items: flex-end;
+  }
+
+  .cp-roster-footer-text {
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .cp-roster-btn--desktop {
+    display: none;
+  }
+
+  .cp-roster-btn--footer {
+    display: block;
+    position: relative;
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cp-roster-title {
+    font-size: clamp(2rem, 12vw, 3rem);
+  }
+
+  .cp-roster-name,
+  .cp-roster-role,
+  .cp-roster-time {
+    font-size: clamp(0.6rem, 2.5vw, 0.75rem);
+  }
+}

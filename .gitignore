@@ -1,0 +1,39 @@
+# Root environment files
+.env
+.env.local
+.env.production
+
+# Frontend
+web/node_modules/
+web/dist/
+web/dist-ssr/
+web/playwright-report/
+web/test-results/
+web/logs/
+web/*.log
+web/.env
+web/.env.local
+web/.env.*.local
+
+# Backend
+server/bin/
+server/tmp/
+server/backups/
+server/*.exe
+server/cover
+server/coverage
+server/coverage.out
+server/coverage.html
+server/*.log
+server/.env
+server/.env.local
+server/.env.production
+server/*.pem
+server/*.key
+server/*.crt
+
+# Editors and OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

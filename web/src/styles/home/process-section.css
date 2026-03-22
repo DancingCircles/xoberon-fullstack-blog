@@ -1,0 +1,170 @@
+/* Process Section (HOW IT'S DONE) - Horizontal Scroll */
+
+.section-process {
+  width: 100vw;
+  height: var(--vh-full);
+  background-color: var(--color-cream-bg);
+  overflow: hidden;
+  position: relative;
+  z-index: var(--z-sticky);
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding: 0;
+  left: 0;
+}
+
+.process-track {
+  height: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  width: max-content;
+  will-change: transform;
+}
+
+.process-panel {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.process-panel--title {
+  width: 100vw;
+  padding: 0 var(--space-48);
+}
+
+.section-process__title {
+  display: flex;
+  flex-direction: column;
+  line-height: 0.85;
+  margin: 0;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: clamp(6rem, 20vw, 15rem);
+  width: 2.9em;
+}
+
+.section-process__title .animated-title {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  white-space: normal;
+}
+
+.section-process__line--red {
+  color: var(--color-accent);
+}
+
+.section-process__line--black {
+  color: var(--color-dark-mid);
+}
+
+.process-panel--step {
+  width: auto;
+  min-width: 540px;
+  border-left: none;
+  padding: 0 var(--space-32);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 40px;
+}
+
+/* Process Card - Stiff Paper Style with Corner Holes */
+.process-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-16);
+  border: 3px solid var(--color-dark-border);
+  padding: 60px 48px 64px;
+  width: 600px;
+  height: 78vh;
+  min-height: 600px;
+  position: relative;
+  box-shadow: none;
+  opacity: 1;
+  /* GPU 加速优化 - 解决横向滚动卡顿 */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+  /* Corner holes using radial gradients */
+  background:
+    radial-gradient(circle at 21px 21px, var(--color-cream-bg) 8px, var(--color-dark-border) 8px, var(--color-dark-border) 10px, transparent 10px),
+    radial-gradient(circle at calc(100% - 21px) 21px, var(--color-cream-bg) 8px, var(--color-dark-border) 8px, var(--color-dark-border) 10px, transparent 10px),
+    radial-gradient(circle at 21px calc(100% - 21px), var(--color-cream-bg) 8px, var(--color-dark-border) 8px, var(--color-dark-border) 10px, transparent 10px),
+    radial-gradient(circle at calc(100% - 21px) calc(100% - 21px), var(--color-cream-bg) 8px, var(--color-dark-border) 8px, var(--color-dark-border) 10px, transparent 10px),
+    var(--color-cream-bg);
+  background-repeat: no-repeat;
+}
+
+.process-card__number {
+  font-family: var(--font-display);
+  font-size: 12rem;
+  color: var(--color-dark-mid);
+  line-height: 0.85;
+  margin-top: var(--space-24);
+  text-shadow: none;
+  letter-spacing: -0.02em;
+}
+
+.process-card__title {
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-shadow: none;
+}
+
+.process-card__desc {
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  color: var(--color-dark);
+  line-height: 1.65;
+  margin-top: var(--space-16);
+  max-width: 85%;
+  font-weight: 400;
+}
+
+@media (max-width: 600px) {
+  .section-process {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .section-process__title {
+    font-size: clamp(4rem, 15vw, 8rem);
+  }
+
+  .process-panel--step {
+    width: 90vw;
+    min-width: auto;
+    padding: 0 var(--space-16);
+  }
+
+  .process-card {
+    width: 100%;
+    min-height: auto;
+    height: 70vh;
+    padding: 40px 24px;
+  }
+
+  .process-card__number {
+    font-size: 8rem;
+  }
+
+  .process-card__title {
+    font-size: 2.4rem;
+  }
+  
+  .process-card__desc {
+    font-size: 1rem;
+    max-width: 100%;
+  }
+}

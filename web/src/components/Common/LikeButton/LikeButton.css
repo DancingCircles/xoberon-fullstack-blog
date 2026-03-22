@@ -1,0 +1,59 @@
+.like-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid rgba(0,0,0,0.1);
+  padding: 8px 16px;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-dark-text);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: visible;
+}
+
+.like-button:hover {
+  background: rgba(206, 40, 40, 0.05);
+  border-color: rgba(206, 40, 40, 0.3);
+}
+
+.like-button.liked {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: rgba(206, 40, 40, 0.08);
+  cursor: default;
+}
+
+.like-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.particles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-accent);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.like-count {
+  font-variant-numeric: tabular-nums;
+}
+
+

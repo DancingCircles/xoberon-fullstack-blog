@@ -1,0 +1,2 @@
+ALTER TABLE reviews DROP COLUMN IF EXISTS reviewed_at;
+ALTER TABLE reviews DROP COLUMN IF EXISTS reviewed_by;

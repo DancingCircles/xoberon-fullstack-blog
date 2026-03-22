@@ -1,0 +1,277 @@
+.acp__title {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  color: var(--color-cream);
+  margin: 0 0 var(--space-32) 0;
+  letter-spacing: 0.02em;
+}
+
+.acp__filters {
+  margin-bottom: var(--space-24);
+}
+
+.acp__tabs {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.acp__tab {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-dim);
+  padding: var(--space-8) var(--space-16);
+  font-size: var(--text-sm);
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.acp__tab:hover {
+  color: var(--color-cream);
+  border-color: var(--color-cream);
+}
+
+.acp__tab--active {
+  color: var(--color-cream);
+  background-color: var(--color-bg-mid);
+  border-color: var(--color-cream);
+}
+
+/* ── Status dot ── */
+
+.acp-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.acp-dot--unread {
+  background-color: var(--color-accent);
+}
+
+.acp-dot--read {
+  background-color: var(--color-success);
+}
+
+.acp-name {
+  color: var(--color-text-dim);
+}
+
+.acp-name--unread {
+  color: var(--color-cream);
+  font-weight: 600;
+}
+
+.acp-email {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ── Message preview (in table row) ── */
+
+.acp-message-preview {
+  color: var(--color-text-dim);
+  font-size: var(--text-md);
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* ── Reply count badge ── */
+
+.acp-reply-count {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.acp-reply-count--has {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.acp-time {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.acp-btn {
+  padding: var(--space-8) var(--space-16);
+  font-size: var(--text-sm);
+  font-family: var(--font-body);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-dim);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.acp-btn:hover {
+  color: var(--color-cream);
+  border-color: var(--color-cream);
+}
+
+/* ── Expanded panel ── */
+
+.acp-expand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+}
+
+.acp-expand__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.acp-expand__sender {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.acp-expand__sender-name {
+  font-weight: 600;
+  color: var(--color-cream);
+  font-size: var(--text-md);
+}
+
+.acp-expand__sender-email {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.acp-expand__sender-time {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.acp-expand__message {
+  color: var(--color-text);
+  font-size: var(--text-md);
+  line-height: 1.75;
+  padding: var(--space-16);
+  background-color: var(--color-bg-deep);
+  border: 1px solid var(--color-border);
+}
+
+/* ── Replies section ── */
+
+.acp-expand__replies {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.acp-expand__replies-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.acp-expand__reply-item {
+  padding: var(--space-16);
+  border-left: 2px solid var(--color-success);
+  background-color: var(--color-bg-deep);
+}
+
+.acp-expand__reply-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  margin-bottom: var(--space-8);
+}
+
+.acp-expand__reply-author {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-success);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.acp-expand__reply-time {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.acp-expand__reply-content {
+  color: var(--color-text);
+  font-size: var(--text-md);
+  line-height: 1.6;
+}
+
+/* ── Compose reply ── */
+
+.acp-expand__compose {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.acp-expand__textarea {
+  width: 100%;
+  background-color: var(--color-bg-deep);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  padding: var(--space-16);
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.2s ease;
+}
+
+.acp-expand__textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+.acp-expand__textarea:focus {
+  outline: none;
+  border-color: var(--color-cream);
+}
+
+.acp-expand__compose-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.acp-expand__compose-hint {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.acp-expand__send-btn {
+  padding: var(--space-8) var(--space-24);
+  font-size: var(--text-sm);
+  font-family: var(--font-body);
+  font-weight: 600;
+  border: 1px solid var(--color-cream);
+  background: transparent;
+  color: var(--color-cream);
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.acp-expand__send-btn:hover:not(:disabled) {
+  background-color: var(--color-cream);
+  color: var(--color-bg-deep);
+}
+
+.acp-expand__send-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}

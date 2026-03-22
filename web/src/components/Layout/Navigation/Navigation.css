@@ -1,0 +1,301 @@
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: var(--z-nav);
+  padding: var(--space-24) var(--space-48);
+  transition: all 0.3s ease;
+}
+
+.nav__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  margin: 0 auto;
+  border: 3px solid var(--color-cream);
+  border-radius: 0;
+  padding: 8px 32px;
+  background-color: var(--color-bg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.nav__logo {
+  position: absolute;
+  left: 32px;
+  z-index: var(--z-nav);
+  flex-shrink: 0;
+}
+
+.nav__logo a {
+  text-decoration: none;
+}
+
+.nav__logo-text {
+  font-family: var(--font-script);
+  font-size: 1.8rem;
+  color: var(--color-cream);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.nav__links {
+  display: flex;
+  gap: var(--space-40);
+  align-items: center;
+}
+
+.nav__actions {
+  position: absolute;
+  right: 32px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  z-index: var(--z-nav);
+  flex-shrink: 0;
+}
+
+.nav__link {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--color-text-dim);
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: color 0.3s ease;
+  position: relative;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nav__link:hover,
+.nav__link.active {
+  color: var(--color-text);
+}
+
+.nav__profile-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-cream);
+  transition: color 0.2s ease;
+}
+
+.nav__profile-link:hover,
+.nav__profile-link.active {
+  color: var(--color-cream);
+}
+
+.nav__profile-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.nav__admin-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-dim);
+  transition: color 0.2s ease;
+}
+
+.nav__admin-btn:hover,
+.nav__admin-btn.active {
+  color: var(--color-accent);
+}
+
+.nav__settings-btn {
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background-color: transparent;
+  border: none;
+  color: var(--color-text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.nav__settings-btn:hover {
+  color: var(--color-text);
+  transform: rotate(45deg);
+}
+
+/* 响应式 - 大屏收缩：缩小链接间距和字号 */
+@media (max-width: 1200px) {
+  .nav {
+    padding: var(--space-20) var(--space-32);
+  }
+
+  .nav__container {
+    padding: 8px 24px;
+  }
+
+  .nav__logo {
+    left: 24px;
+  }
+
+  .nav__links {
+    gap: var(--space-24);
+  }
+
+  .nav__link {
+    font-size: 1.2rem;
+  }
+
+  .nav__actions {
+    right: 24px;
+  }
+}
+
+/* 响应式 - 平板横屏：取消绝对定位，改为流式布局 */
+@media (max-width: 1024px) {
+  .nav {
+    padding: var(--space-16) var(--space-24);
+  }
+
+  .nav__container {
+    padding: 8px 16px;
+    justify-content: space-between;
+    gap: var(--space-12);
+  }
+
+  .nav__logo {
+    position: static;
+  }
+
+  .nav__logo-text {
+    font-size: 1.5rem;
+  }
+
+  .nav__links {
+    gap: var(--space-16);
+  }
+
+  .nav__link {
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+  }
+
+  .nav__actions {
+    position: static;
+    gap: var(--space-8);
+  }
+
+  .nav__profile-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .nav__settings-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* 响应式 - 平板竖屏：进一步压缩 */
+@media (max-width: 768px) {
+  .nav {
+    padding: var(--space-12) var(--space-16);
+  }
+
+  .nav__container {
+    padding: 6px 12px;
+    border-width: 2px;
+  }
+
+  .nav__logo-text {
+    font-size: 1.3rem;
+  }
+
+  .nav__links {
+    gap: var(--space-12);
+  }
+
+  .nav__link {
+    font-size: 0.8rem;
+    letter-spacing: 0;
+    font-weight: 700;
+  }
+
+  .nav__actions {
+    gap: var(--space-4);
+  }
+
+  .nav__profile-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .nav__settings-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* 响应式 - 手机：横向滚动 + 44px 触摸目标 */
+@media (max-width: 600px) {
+  .nav {
+    padding: var(--space-8) var(--space-12);
+  }
+
+  .nav__container {
+    padding: 4px 8px;
+    gap: var(--space-4);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .nav__container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav__logo-text {
+    font-size: 1rem;
+  }
+
+  .nav__links {
+    gap: var(--space-4);
+    flex-shrink: 0;
+  }
+
+  .nav__link {
+    font-size: 0.75rem;
+    padding: var(--space-8) var(--space-4);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav__actions {
+    gap: var(--space-4);
+  }
+
+  .nav__profile-link,
+  .nav__settings-btn,
+  .nav__admin-btn {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav__profile-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .nav__settings-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+}

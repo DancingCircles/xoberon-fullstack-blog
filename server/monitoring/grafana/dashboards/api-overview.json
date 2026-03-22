@@ -1,0 +1,178 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+    {
+      "title": "QPS (Requests per Second)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total[5m]))",
+          "legendFormat": "Total QPS",
+          "refId": "A"
+        },
+        {
+          "expr": "sum by (method) (rate(http_requests_total[5m]))",
+          "legendFormat": "{{method}}",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "reqps" },
+        "overrides": []
+      }
+    },
+    {
+      "title": "HTTP Status Code Distribution",
+      "type": "piechart",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum by (status) (rate(http_requests_total[5m]))",
+          "legendFormat": "{{status}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "P95 Latency",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))",
+          "legendFormat": "P95",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))",
+          "legendFormat": "P50",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "s" },
+        "overrides": []
+      }
+    },
+    {
+      "title": "P99 Latency",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))",
+          "legendFormat": "P99",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "s" },
+        "overrides": []
+      }
+    },
+    {
+      "title": "5xx Error Rate",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total{status=~\"5..\"}[5m])) / sum(rate(http_requests_total[5m])) * 100",
+          "legendFormat": "5xx Rate %",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "percent" },
+        "overrides": []
+      }
+    },
+    {
+      "title": "Go Goroutines",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 16 },
+      "targets": [
+        {
+          "expr": "go_goroutines{job=\"xoberon-api\"}",
+          "legendFormat": "Goroutines",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Go Memory (Alloc)",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 16 },
+      "targets": [
+        {
+          "expr": "go_memstats_alloc_bytes{job=\"xoberon-api\"}",
+          "legendFormat": "Alloc",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "bytes" },
+        "overrides": []
+      }
+    },
+    {
+      "title": "Go Memory Usage",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+      "targets": [
+        {
+          "expr": "go_memstats_alloc_bytes{job=\"xoberon-api\"}",
+          "legendFormat": "Alloc",
+          "refId": "A"
+        },
+        {
+          "expr": "go_memstats_sys_bytes{job=\"xoberon-api\"}",
+          "legendFormat": "Sys",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "bytes" },
+        "overrides": []
+      }
+    },
+    {
+      "title": "Go GC Pause Duration",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+      "targets": [
+        {
+          "expr": "rate(go_gc_duration_seconds_sum{job=\"xoberon-api\"}[5m])",
+          "legendFormat": "GC Pause Rate",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "s" },
+        "overrides": []
+      }
+    },
+    {
+      "title": "Goroutines Over Time",
+      "type": "timeseries",
+      "gridPos": { "h": 4, "w": 12, "x": 12, "y": 20 },
+      "targets": [
+        {
+          "expr": "go_goroutines{job=\"xoberon-api\"}",
+          "legendFormat": "Goroutines",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["xoberon", "api", "go"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "XOBERON API Overview",
+  "uid": "xoberon-api-overview"
+}

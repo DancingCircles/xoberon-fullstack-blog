@@ -1,0 +1,42 @@
+.page--not-found {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg);
+  gap: var(--space-24);
+  padding: var(--space-32);
+}
+
+.nf-title {
+  display: flex;
+  gap: var(--space-8);
+  margin: 0;
+  perspective: 600px;
+}
+
+.nf-char {
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 18vw, 14rem);
+  color: var(--color-cream);
+  line-height: 1;
+  display: inline-block;
+  text-shadow: var(--shadow-title);
+}
+
+.nf-subtitle {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.nf-btn {
+  width: auto;
+  padding: var(--space-16) var(--space-48);
+  font-size: var(--text-lg);
+  margin-top: var(--space-16);
+}

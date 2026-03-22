@@ -1,0 +1,10 @@
+.animated-title {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.animated-title__char {
+  display: inline-block;
+  transform-origin: bottom center; /* 关键：确保变形基于底部 */
+  transition: color 0.2s ease;
+}

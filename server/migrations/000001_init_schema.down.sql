@@ -1,0 +1,7 @@
+-- 回滚初始结构（按依赖顺序反向删除）
+DROP TABLE IF EXISTS likes;
+DROP TABLE IF EXISTS contacts;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS essays;
+DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS users;

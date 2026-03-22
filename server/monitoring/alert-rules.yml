@@ -1,0 +1,42 @@
+groups:
+  - name: xoberon-alerts
+    rules:
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "API P95 延迟超过 2 秒"
+
+      - alert: HighErrorRate
+        expr: sum(rate(http_requests_total{code=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "API 5xx 错误率超过 5%"
+
+      - alert: ServiceDown
+        expr: up{job="xoberon-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "XOBERON API 服务不可用"
+
+      - alert: DiskSpaceLow
+        expr: node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} < 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "磁盘剩余空间低于 10%"
+
+      - alert: HighMemoryUsage
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "内存使用率超过 90%"

@@ -1,0 +1,231 @@
+@font-face {
+  font-family: 'Pacifico';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Pacifico-Regular.woff2') format('woff2');
+}
+
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  /* ── Viewport ── */
+  --vh-full: 100vh;
+  --vh-full: 100dvh;
+
+  /* ── Colors: 深色主题基础 ── */
+  --color-bg: #2e333a;
+  --color-bg-top: #2a2f3a;
+  --color-bg-mid: #1d2128;
+  --color-bg-deep: #191c22;
+  --color-text: #f3ead7;
+  --color-text-dim: #b8b1a4;
+  --color-text-muted: #b5b5b5;
+  --color-border: rgba(243, 234, 215, 0.3);
+  --color-dark: #1a1a1a;
+  --color-dark-mid: #3a3f47;
+  --color-dark-border: #4a4a4a;
+  --color-white: #ffffff;
+
+  /* ── Colors: 奶油色系 ── */
+  --color-cream: #f3ead7;
+  --color-cream-muted: #e6dcc6;
+  --color-cream-bg: #edead8;
+
+  /* ── Colors: 强调色 ── */
+  --color-accent: #ce2828;
+  --color-accent-deep: #b71c1c;
+
+  /* ── Colors: 浅色背景上的深色文字 ── */
+  --color-dark-text: #333333;
+  --color-dark-text-mid: #555555;
+  --color-dark-text-dim: #666666;
+  --color-dark-text-muted: #888888;
+  --color-dark-text-faint: #999999;
+
+  /* ── Colors: 语义色 ── */
+  --color-success: #2e7d32;
+  --color-warning: #e65100;
+  --color-error-light: #ef9a9a;
+
+  /* ── Typography ── */
+  --font-display: 'Grand Bold', 'Impact', 'Franklin Gothic Heavy', sans-serif;
+  --font-script: 'Pacifico', 'Brush Script MT', 'Segoe Script', cursive;
+  --font-body: 'PP Neue Montreal', 'Segoe UI', 'Helvetica Neue', sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.5rem;
+  --text-hero: clamp(4rem, 12vw, 11rem);
+  --text-hero-sub: clamp(2.6rem, 8vw, 6.4rem);
+
+  /* ── Spacing ── */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-56: 56px;
+  --space-64: 64px;
+  --space-80: 80px;
+  --space-96: 96px;
+
+  /* ── Shadows ── */
+  --shadow-title: 0 6px 0 rgba(0, 0, 0, 0.35);
+
+  /* ── Layout ── */
+  --layout-max: 1200px;
+
+  /* ── Admin ── */
+  --admin-sidebar-w: 240px;
+  --color-badge-owner: #d4a017;
+  --color-badge-admin: var(--color-accent);
+  --color-badge-pending: var(--color-warning);
+  --color-badge-approved: var(--color-success);
+  --color-badge-rejected: var(--color-accent);
+
+  /* ── z-index layers ── */
+  --z-back: 0;
+  --z-base: 1;
+  --z-front: 2;
+  --z-top: 3;
+  --z-raised: 5;
+  --z-sticky: 10;
+  --z-float: 100;
+  --z-announce: 900;
+  --z-nav: 1000;
+  --z-modal: 2000;
+  --z-toast: 3000;
+  --z-grain: 9999;
+
+  /*
+   * Responsive breakpoints (reference only — CSS variables can't be used in media queries)
+   * 600px   — mobile
+   * 768px   — tablet
+   * 1024px  — desktop
+   * 1200px  — large desktop
+   */
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 90%;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  overflow-x: hidden;
+  position: relative;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Static grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: var(--z-grain);
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 300px 300px;
+}
+
+#root {
+  min-height: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+@media (max-width: 600px) {
+  html {
+    font-size: 85%;
+  }
+}
+
+/* 触摸设备：重置粘滞 hover */
+@media (hover: none) {
+  .nav__link:hover {
+    color: inherit;
+  }
+
+  .hero__apply-btn:hover {
+    background-color: var(--color-dark-mid);
+    transform: none;
+  }
+
+  .section-cta__button:hover {
+    transform: none;
+    background-color: var(--color-dark-mid);
+  }
+
+  .cta-button:hover .button-top-container {
+    transform: none;
+  }
+
+  .category-pill:hover {
+    color: var(--color-text-dim);
+    background: transparent;
+  }
+
+  .horizontal-scroll-section .blog-card:not(.active):hover {
+    opacity: 0.4;
+    transform: scale(0.85) translateY(30px);
+  }
+}
