@@ -40,7 +40,7 @@ func NewUserHandler(
 	}
 }
 
-// GetProfile ??????
+// GetProfile returns a user's public profile.
 func (h *UserHandler) GetProfile(c *gin.Context) {
 	handle := c.Param("handle")
 	if handle != "" && handle[0] != '@' {
@@ -65,7 +65,7 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 	})
 }
 
-// Search ??????
+// Search returns users matching the query string.
 func (h *UserHandler) Search(c *gin.Context) {
 	q := c.Query("q")
 	users, err := h.searchUsers.Handle(c.Request.Context(), q)
@@ -103,7 +103,7 @@ func (h *UserHandler) UpdateMe(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.ToUserResp(user))
 }
 
-// ChangePassword ????????
+// ChangePassword updates the current user's password.
 func (h *UserHandler) ChangePassword(c *gin.Context) {
 	var req dto.ChangePasswordReq
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -122,10 +122,10 @@ func (h *UserHandler) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "?????"})
+	c.JSON(http.StatusOK, gin.H{"message": "密码已更新"})
 }
 
-// AdminListUsers ????????????????/?????
+// AdminListUsers returns users and counts for the admin console.
 func (h *UserHandler) AdminListUsers(c *gin.Context) {
 	p := parsePagination(c)
 
@@ -151,11 +151,11 @@ func (h *UserHandler) AdminListUsers(c *gin.Context) {
 	})
 }
 
-// AdminUpdateRole ????????????
+// AdminUpdateRole updates a user's role from the admin console.
 func (h *UserHandler) AdminUpdateRole(c *gin.Context) {
 	targetID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "????? ID"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "无效的用户 ID"})
 		return
 	}
 
@@ -168,6 +168,7 @@ func (h *UserHandler) AdminUpdateRole(c *gin.Context) {
 	user, err := h.updateUserRole.Handle(c.Request.Context(), command.UpdateUserRoleCommand{
 		TargetUserID: targetID,
 		NewRole:      req.Role,
+		ActorRole:    middleware.GetUserRole(c),
 	})
 	if err != nil {
 		mapError(c, err)

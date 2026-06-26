@@ -165,7 +165,7 @@ func main() {
 	// ---- HTTP Handler ----
 	handlers := apphttp.Handlers{
 		Auth:           handler.NewAuthHandler(registerHandler, loginHandler, tokenBlacklist, captchaGen, zapLog),
-		Post:           handler.NewPostHandler(db, listPostsHandler, getPostHandler, createPostHandler, updatePostHandler, deletePostHandler, toggleLikeHandler, postCache),
+		Post:           handler.NewPostHandler(listPostsHandler, getPostHandler, createPostHandler, updatePostHandler, deletePostHandler, toggleLikeHandler, postCache),
 		Essay:          handler.NewEssayHandler(listEssaysHandler, getEssayHandler, createEssayHandler, updateEssayHandler, deleteEssayHandler, toggleLikeHandler, essayCache),
 		Comment:        handler.NewCommentHandler(listCommentsByPostHandler, createCommentHandler, deleteCommentHandler),
 		User:           handler.NewUserHandler(getUserProfileHandler, listUsersHandler, searchUsersHandler, updateUserRoleHandler, updateProfileHandler, changePasswordHandler),

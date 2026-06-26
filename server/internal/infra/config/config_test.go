@@ -22,6 +22,7 @@ func TestConfig_LoadDefaults(t *testing.T) {
 	assert.Equal(t, "test-secret-key-must-be-at-least-32-bytes-long!!", cfg.JWT.Secret)
 	assert.Equal(t, "testuser", cfg.DB.User)
 	assert.Equal(t, "testdb", cfg.DB.Name)
+	assert.Equal(t, "disable", cfg.DB.SSLMode)
 }
 
 func TestConfig_MissingJWTSecret(t *testing.T) {

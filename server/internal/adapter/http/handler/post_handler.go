@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 
 	"xoberon-server/internal/adapter/http/dto"
 	"xoberon-server/internal/adapter/http/middleware"
@@ -17,7 +16,6 @@ import (
 )
 
 type PostHandler struct {
-	db         *sqlx.DB
 	listPosts  *query.ListPostsHandler
 	getPost    *query.GetPostHandler
 	createPost *command.CreatePostHandler
@@ -28,7 +26,6 @@ type PostHandler struct {
 }
 
 func NewPostHandler(
-	db *sqlx.DB,
 	listPosts *query.ListPostsHandler,
 	getPost *query.GetPostHandler,
 	createPost *command.CreatePostHandler,
@@ -38,7 +35,6 @@ func NewPostHandler(
 	cache repository.PostCachePort,
 ) *PostHandler {
 	return &PostHandler{
-		db:         db,
 		listPosts:  listPosts,
 		getPost:    getPost,
 		createPost: createPost,
@@ -78,7 +74,10 @@ func (h *PostHandler) List(c *gin.Context) {
 }
 
 func (h *PostHandler) GetBySlug(c *gin.Context) {
-	slug := c.Param("id")
+	slug := c.Param("slug")
+	if slug == "" {
+		slug = c.Param("id")
+	}
 
 	result, err := h.getPost.Handle(c.Request.Context(), slug)
 	if err != nil {
@@ -109,7 +108,7 @@ func (h *PostHandler) Create(c *gin.Context) {
 		return
 	}
 
-	// ?? DB ?? JOIN ????????
+	// Refetch after save so joined author fields are present in the response.
 	result, err := h.getPost.Handle(c.Request.Context(), post.Slug())
 	if err != nil {
 		c.JSON(http.StatusCreated, dto.ToPostListResp(post))
@@ -121,7 +120,7 @@ func (h *PostHandler) Create(c *gin.Context) {
 func (h *PostHandler) Update(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "????? ID"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "无效的文章 ID"})
 		return
 	}
 
@@ -154,7 +153,7 @@ func (h *PostHandler) Update(c *gin.Context) {
 func (h *PostHandler) Delete(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "????? ID"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "无效的文章 ID"})
 		return
 	}
 
@@ -170,13 +169,13 @@ func (h *PostHandler) Delete(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.MessageResp{Message: "????"})
+	c.JSON(http.StatusOK, dto.MessageResp{Message: "文章已删除"})
 }
 
 func (h *PostHandler) Like(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "????? ID"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "无效的文章 ID"})
 		return
 	}
 

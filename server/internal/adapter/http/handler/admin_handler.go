@@ -1,7 +1,10 @@
 package handler
 
 import (
+	"context"
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"time"
@@ -197,12 +200,18 @@ func (h *AdminHandler) ApproveReview(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
+	tx, err := h.db.BeginTxx(ctx, nil)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "开启事务失败"})
+		return
+	}
+	defer tx.Rollback()
 
 	var rev struct {
 		ContentType string    `db:"content_type"`
 		ContentID   uuid.UUID `db:"content_id"`
 	}
-	if err := h.db.GetContext(ctx, &rev,
+	if err := tx.GetContext(ctx, &rev,
 		`UPDATE reviews SET status = 'approved', reject_reason = NULL,
 		        reviewed_by = 'admin', reviewed_at = NOW()
 		 WHERE id = $1
@@ -211,28 +220,40 @@ func (h *AdminHandler) ApproveReview(c *gin.Context) {
 		return
 	}
 
+	var cacheToInvalidate func(context.Context) error
 	switch rev.ContentType {
 	case "post":
-		if _, err := h.db.ExecContext(ctx,
+		if _, err := tx.ExecContext(ctx,
 			`UPDATE posts SET review_status = 'published' WHERE id = $1`, rev.ContentID); err != nil {
 			c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "更新文章状态失败"})
 			return
 		}
-		warnCacheInvalidate(h.cache.InvalidateAll(ctx))
+		cacheToInvalidate = h.cache.InvalidateAll
 	case "comment":
-		if _, err := h.db.ExecContext(ctx,
+		if _, err := tx.ExecContext(ctx,
 			`UPDATE comments SET review_status = 'published' WHERE id = $1`, rev.ContentID); err != nil {
 			c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "更新评论状态失败"})
 			return
 		}
-		warnCacheInvalidate(h.cache.InvalidateAll(ctx))
+		cacheToInvalidate = h.cache.InvalidateAll
 	case "essay":
-		if _, err := h.db.ExecContext(ctx,
+		if _, err := tx.ExecContext(ctx,
 			`UPDATE essays SET review_status = 'published' WHERE id = $1`, rev.ContentID); err != nil {
 			c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "更新随笔状态失败"})
 			return
 		}
-		warnCacheInvalidate(h.essayCache.InvalidateAll(ctx))
+		cacheToInvalidate = h.essayCache.InvalidateAll
+	default:
+		c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "未知审核内容类型"})
+		return
+	}
+
+	if err := tx.Commit(); err != nil {
+		c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "提交审核结果失败"})
+		return
+	}
+	if cacheToInvalidate != nil {
+		warnCacheInvalidate(cacheToInvalidate(ctx))
 	}
 
 	c.JSON(http.StatusOK, dto.MessageResp{Message: "审核通过"})
@@ -256,13 +277,19 @@ func (h *AdminHandler) DeleteComment(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
+	tx, err := h.db.BeginTxx(ctx, nil)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "开启事务失败"})
+		return
+	}
+	defer tx.Rollback()
 
 	var comment struct {
 		Content      string `db:"content"`
 		AuthorName   string `db:"author_name"`
 		AuthorAvatar string `db:"author_avatar"`
 	}
-	err = h.db.GetContext(ctx, &comment,
+	err = tx.GetContext(ctx, &comment,
 		`SELECT c.content, u.name AS author_name, u.avatar AS author_avatar
 		 FROM comments c JOIN users u ON u.id = c.author_id
 		 WHERE c.id = $1`, id)
@@ -271,31 +298,44 @@ func (h *AdminHandler) DeleteComment(c *gin.Context) {
 		return
 	}
 
-	_, err = h.db.ExecContext(ctx, `DELETE FROM comments WHERE id = $1`, id)
+	_, err = tx.ExecContext(ctx, `DELETE FROM comments WHERE id = $1`, id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "删除评论失败"})
 		return
 	}
 
 	var existingReviewID uuid.UUID
-	existErr := h.db.GetContext(ctx, &existingReviewID,
+	existErr := tx.GetContext(ctx, &existingReviewID,
 		`SELECT id FROM reviews WHERE content_type = 'comment' AND content_id = $1`, id)
 	if existErr == nil {
-		_, _ = h.db.ExecContext(ctx,
+		if _, err := tx.ExecContext(ctx,
 			`UPDATE reviews SET status = 'rejected', reject_reason = $2,
 			        reviewed_by = 'admin', reviewed_at = NOW()
-			 WHERE id = $1`, existingReviewID, req.Reason)
-	} else {
+			 WHERE id = $1`, existingReviewID, req.Reason); err != nil {
+			c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "更新审核记录失败"})
+			return
+		}
+	} else if errors.Is(existErr, sql.ErrNoRows) {
 		excerpt := comment.Content
 		if runes := []rune(excerpt); len(runes) > 100 {
 			excerpt = string(runes[:100]) + "…"
 		}
-		_, _ = h.db.ExecContext(ctx,
+		if _, err := tx.ExecContext(ctx,
 			`INSERT INTO reviews (content_type, content_id, title, excerpt, author_name, author_avatar, status, reject_reason, reviewed_by, reviewed_at)
 			 VALUES ('comment', $1, '', $2, $3, $4, 'rejected', $5, 'admin', NOW())`,
-			id, excerpt, comment.AuthorName, comment.AuthorAvatar, req.Reason)
+			id, excerpt, comment.AuthorName, comment.AuthorAvatar, req.Reason); err != nil {
+			c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "创建审核记录失败"})
+			return
+		}
+	} else {
+		c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "查询审核记录失败"})
+		return
 	}
 
+	if err := tx.Commit(); err != nil {
+		c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "提交删除评论失败"})
+		return
+	}
 	warnCacheInvalidate(h.cache.InvalidateAll(ctx))
 	c.JSON(http.StatusOK, dto.MessageResp{Message: "评论已删除"})
 }
@@ -318,44 +358,62 @@ func (h *AdminHandler) RejectReview(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
+	tx, err := h.db.BeginTxx(ctx, nil)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "开启事务失败"})
+		return
+	}
+	defer tx.Rollback()
 
 	var rev struct {
 		ContentType string    `db:"content_type"`
 		ContentID   uuid.UUID `db:"content_id"`
 	}
-	if err := h.db.GetContext(ctx, &rev,
+	if err := tx.GetContext(ctx, &rev,
 		`SELECT content_type, content_id FROM reviews WHERE id = $1`, id); err != nil {
 		c.JSON(http.StatusNotFound, dto.ErrorResp{Error: "NOT_FOUND", Message: "审核记录不存在"})
 		return
 	}
 
+	var cacheToInvalidate func(context.Context) error
 	switch rev.ContentType {
 	case "post":
-		if _, err := h.db.ExecContext(ctx, `DELETE FROM posts WHERE id = $1`, rev.ContentID); err != nil {
+		if _, err := tx.ExecContext(ctx, `DELETE FROM posts WHERE id = $1`, rev.ContentID); err != nil {
 			c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "删除文章失败"})
 			return
 		}
-		warnCacheInvalidate(h.cache.InvalidateAll(ctx))
+		cacheToInvalidate = h.cache.InvalidateAll
 	case "comment":
-		if _, err := h.db.ExecContext(ctx, `DELETE FROM comments WHERE id = $1`, rev.ContentID); err != nil {
+		if _, err := tx.ExecContext(ctx, `DELETE FROM comments WHERE id = $1`, rev.ContentID); err != nil {
 			c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "删除评论失败"})
 			return
 		}
-		warnCacheInvalidate(h.cache.InvalidateAll(ctx))
+		cacheToInvalidate = h.cache.InvalidateAll
 	case "essay":
-		if _, err := h.db.ExecContext(ctx, `DELETE FROM essays WHERE id = $1`, rev.ContentID); err != nil {
+		if _, err := tx.ExecContext(ctx, `DELETE FROM essays WHERE id = $1`, rev.ContentID); err != nil {
 			c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "删除随笔失败"})
 			return
 		}
-		warnCacheInvalidate(h.essayCache.InvalidateAll(ctx))
+		cacheToInvalidate = h.essayCache.InvalidateAll
+	default:
+		c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "未知审核内容类型"})
+		return
 	}
 
-	if _, err := h.db.ExecContext(ctx,
+	if _, err := tx.ExecContext(ctx,
 		`UPDATE reviews SET status = 'rejected', reject_reason = $2,
 		        reviewed_by = 'admin', reviewed_at = NOW()
 		 WHERE id = $1`, id, req.Reason); err != nil {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "更新审核记录失败"})
 		return
+	}
+
+	if err := tx.Commit(); err != nil {
+		c.JSON(http.StatusInternalServerError, dto.ErrorResp{Error: "INTERNAL_ERROR", Message: "提交审核结果失败"})
+		return
+	}
+	if cacheToInvalidate != nil {
+		warnCacheInvalidate(cacheToInvalidate(ctx))
 	}
 
 	c.JSON(http.StatusOK, dto.MessageResp{Message: "已删除"})

@@ -27,7 +27,7 @@ func TestUpdateUserRole_Success(t *testing.T) {
 	users.On("Update", mock.Anything, mock.Anything).Return(nil)
 
 	h := command.NewUpdateUserRoleHandler(users)
-	got, err := h.Handle(context.Background(), command.UpdateUserRoleCommand{TargetUserID: targetID, NewRole: "admin"})
+	got, err := h.Handle(context.Background(), command.UpdateUserRoleCommand{TargetUserID: targetID, NewRole: "admin", ActorRole: "admin"})
 
 	require.NoError(t, err)
 	assert.NotNil(t, got)
@@ -39,11 +39,45 @@ func TestUpdateUserRole_InvalidRole(t *testing.T) {
 	targetID := uuid.New()
 
 	h := command.NewUpdateUserRoleHandler(users)
-	got, err := h.Handle(context.Background(), command.UpdateUserRoleCommand{TargetUserID: targetID, NewRole: "superuser"})
+	got, err := h.Handle(context.Background(), command.UpdateUserRoleCommand{TargetUserID: targetID, NewRole: "superuser", ActorRole: "admin"})
 
 	assert.Error(t, err)
 	assert.Nil(t, got)
 	var ae *errs.AppError
 	require.True(t, errors.As(err, &ae))
 	assert.Equal(t, errs.CodeValidation, ae.Code())
+}
+
+func TestUpdateUserRole_AdminCannotGrantOwner(t *testing.T) {
+	users := new(mocks.MockUserRepository)
+	targetID := uuid.New()
+
+	h := command.NewUpdateUserRoleHandler(users)
+	got, err := h.Handle(context.Background(), command.UpdateUserRoleCommand{TargetUserID: targetID, NewRole: "owner", ActorRole: "admin"})
+
+	assert.Error(t, err)
+	assert.Nil(t, got)
+	var ae *errs.AppError
+	require.True(t, errors.As(err, &ae))
+	assert.Equal(t, errs.CodeForbidden, ae.Code())
+	users.AssertNotCalled(t, "FindByID", mock.Anything, targetID)
+}
+
+func TestUpdateUserRole_AdminCannotModifyOwner(t *testing.T) {
+	users := new(mocks.MockUserRepository)
+	targetID := uuid.New()
+	now := time.Now()
+	owner := entity.ReconstructUser(targetID, "owneruser", "owner@example.com", "$2a$12$LJ3m4ys3Bz4IihWyXDw2xeqH7VlBsJEv8JsdO7YYu5FJdNJuGHpai", "Owner", "@owner", "/avatars/1.png", "", "owner", now, now)
+
+	users.On("FindByID", mock.Anything, targetID).Return(owner, nil)
+
+	h := command.NewUpdateUserRoleHandler(users)
+	got, err := h.Handle(context.Background(), command.UpdateUserRoleCommand{TargetUserID: targetID, NewRole: "admin", ActorRole: "admin"})
+
+	assert.Error(t, err)
+	assert.Nil(t, got)
+	var ae *errs.AppError
+	require.True(t, errors.As(err, &ae))
+	assert.Equal(t, errs.CodeForbidden, ae.Code())
+	users.AssertNotCalled(t, "Update", mock.Anything, mock.Anything)
 }

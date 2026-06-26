@@ -44,7 +44,7 @@ func newPostTestDeps() (
 	deletePost := command.NewDeletePostHandler(postRepo, cache, bf)
 	toggleLike := command.NewToggleLikeHandler(likeRepo)
 
-	postHandler := handler.NewPostHandler(nil, listPosts, getPost, createPost, updatePost, deletePost, toggleLike, cache)
+	postHandler := handler.NewPostHandler(listPosts, getPost, createPost, updatePost, deletePost, toggleLike, cache)
 	return postRepo, cache, commentRepo, likeRepo, moderator, bf, postHandler
 }
 

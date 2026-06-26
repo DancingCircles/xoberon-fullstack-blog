@@ -112,6 +112,7 @@ func TestAdminApproveReview_Success(t *testing.T) {
 	reviewID := uuid.New()
 	contentID := uuid.New()
 
+	smock.ExpectBegin()
 	smock.ExpectQuery("UPDATE reviews SET").
 		WithArgs(reviewID).
 		WillReturnRows(sqlmock.NewRows([]string{"content_type", "content_id"}).AddRow("post", contentID))
@@ -119,6 +120,7 @@ func TestAdminApproveReview_Success(t *testing.T) {
 	smock.ExpectExec("UPDATE posts SET").
 		WithArgs(contentID).
 		WillReturnResult(sqlmock.NewResult(0, 1))
+	smock.ExpectCommit()
 
 	postCache.On("InvalidateAll", mock.Anything).Return(nil)
 
@@ -150,6 +152,7 @@ func TestAdminRejectReview_Success(t *testing.T) {
 	reviewID := uuid.New()
 	contentID := uuid.New()
 
+	smock.ExpectBegin()
 	smock.ExpectQuery("SELECT content_type, content_id FROM reviews").
 		WithArgs(reviewID).
 		WillReturnRows(sqlmock.NewRows([]string{"content_type", "content_id"}).AddRow("post", contentID))
@@ -163,6 +166,7 @@ func TestAdminRejectReview_Success(t *testing.T) {
 	smock.ExpectExec("UPDATE reviews SET").
 		WithArgs(reviewID, "违规内容").
 		WillReturnResult(sqlmock.NewResult(0, 1))
+	smock.ExpectCommit()
 
 	r := setupRouter()
 	r.PUT("/admin/reviews/:id/reject", h.RejectReview)
@@ -182,6 +186,7 @@ func TestAdminDeleteComment_Success(t *testing.T) {
 	commentID := uuid.New()
 	reviewID := uuid.New()
 
+	smock.ExpectBegin()
 	smock.ExpectQuery("SELECT c.content").
 		WithArgs(commentID).
 		WillReturnRows(sqlmock.NewRows([]string{"content", "author_name", "author_avatar"}).
@@ -198,6 +203,7 @@ func TestAdminDeleteComment_Success(t *testing.T) {
 	smock.ExpectExec("UPDATE reviews SET").
 		WithArgs(reviewID, "测试原因").
 		WillReturnResult(sqlmock.NewResult(0, 1))
+	smock.ExpectCommit()
 
 	postCache.On("InvalidateAll", mock.Anything).Return(nil)
 

@@ -74,7 +74,7 @@ func (h *EssayHandler) List(c *gin.Context) {
 func (h *EssayHandler) GetByID(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "????? ID"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "无效的随笔 ID"})
 		return
 	}
 
@@ -112,7 +112,7 @@ func (h *EssayHandler) Create(c *gin.Context) {
 func (h *EssayHandler) Update(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "????? ID"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "无效的随笔 ID"})
 		return
 	}
 
@@ -145,7 +145,7 @@ func (h *EssayHandler) Update(c *gin.Context) {
 func (h *EssayHandler) Delete(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "????? ID"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "无效的随笔 ID"})
 		return
 	}
 
@@ -162,13 +162,13 @@ func (h *EssayHandler) Delete(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.MessageResp{Message: "????"})
+	c.JSON(http.StatusOK, dto.MessageResp{Message: "随笔已删除"})
 }
 
 func (h *EssayHandler) Like(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "????? ID"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "无效的随笔 ID"})
 		return
 	}
 

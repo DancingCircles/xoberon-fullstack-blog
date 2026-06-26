@@ -102,7 +102,7 @@ func Load() (*Config, error) {
 	v.SetDefault("SERVER_TRUSTED_PROXIES", "127.0.0.1,::1")
 	v.SetDefault("DB_HOST", "localhost")
 	v.SetDefault("DB_PORT", "5432")
-	v.SetDefault("DB_SSLMODE", "require")
+	v.SetDefault("DB_SSLMODE", "disable")
 	v.SetDefault("DB_MAX_OPEN_CONNS", 25)
 	v.SetDefault("DB_MAX_IDLE_CONNS", 10)
 	v.SetDefault("DB_CONN_MAX_LIFETIME", "5m")

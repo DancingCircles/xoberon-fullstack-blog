@@ -75,13 +75,14 @@ func NewRouter(deps RouterDeps, h Handlers) *gin.Engine {
 		v1.GET("/auth/captcha", rl, h.Auth.Captcha)
 		v1.POST("/auth/register", rl, h.Auth.Register)
 		v1.POST("/auth/login", rl, h.Auth.Login)
+		v1.POST("/contact", rl, h.Contact.Submit)
 
 		v1.GET("/posts", h.Post.List)
 
 		optAuth := middleware.OptionalAuth(deps.JWTMgr, deps.Blacklist)
 		v1.GET("/posts/recommendations", optAuth, h.Recommendation.Recommendations)
 
-		v1.GET("/posts/:id", h.Post.GetBySlug)
+		v1.GET("/posts/:slug", h.Post.GetBySlug)
 		v1.GET("/posts/:id/comments", h.Comment.ListByPost)
 
 		v1.GET("/essays", h.Essay.List)
@@ -95,7 +96,6 @@ func NewRouter(deps RouterDeps, h Handlers) *gin.Engine {
 		{
 			authed.POST("/auth/logout", h.Auth.Logout)
 			authed.POST("/heartbeat", h.Heartbeat.Heartbeat)
-			authed.POST("/contact", rl, h.Contact.Submit)
 
 			authed.POST("/posts", rl, h.Post.Create)
 			authed.PUT("/posts/:id", rl, h.Post.Update)

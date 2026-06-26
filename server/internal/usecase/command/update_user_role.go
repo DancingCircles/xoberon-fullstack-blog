@@ -14,6 +14,7 @@ import (
 type UpdateUserRoleCommand struct {
 	TargetUserID uuid.UUID
 	NewRole      string
+	ActorRole    string
 }
 
 type UpdateUserRoleHandler struct {
@@ -27,12 +28,26 @@ func NewUpdateUserRoleHandler(users repository.UserRepository) *UpdateUserRoleHa
 func (h *UpdateUserRoleHandler) Handle(ctx context.Context, cmd UpdateUserRoleCommand) (*entity.User, error) {
 	role, err := valueobject.NewRole(cmd.NewRole)
 	if err != nil {
-		return nil, errs.Validationf("无效的角色值：%s，有效值为 user 或 admin", cmd.NewRole)
+		return nil, errs.Validationf("无效的角色值：%s，有效值为 user、admin 或 owner", cmd.NewRole)
+	}
+
+	actorRole, err := valueobject.NewRole(cmd.ActorRole)
+	if err != nil {
+		return nil, errs.Forbidden("无权修改用户角色")
+	}
+	if !actorRole.IsAdmin() {
+		return nil, errs.Forbidden("需要管理员权限")
+	}
+	if role.IsOwner() && !actorRole.IsOwner() {
+		return nil, errs.Forbidden("只有 owner 可以授予 owner 角色")
 	}
 
 	user, err := h.users.FindByID(ctx, cmd.TargetUserID)
 	if err != nil {
 		return nil, err
+	}
+	if user.Role().IsOwner() && !actorRole.IsOwner() {
+		return nil, errs.Forbidden("只有 owner 可以修改 owner 角色")
 	}
 
 	user.PromoteTo(role)
