@@ -3,7 +3,7 @@ import { DataContext } from './DataContext'
 import type { AddPostInput, AddEssayInput } from './DataContext'
 import type { BlogPost, EssayItem, Comment } from '../../assets/data/types'
 import { friendlyErrorMessage } from '../../services/api'
-import * as mockRuntime from '../../services/mockRuntime'
+import * as mockRuntime from '../../services/runtime'
 import { useToast } from '../../hooks/social/useToast'
 
 const MODERATION_CHECK_DELAY = 8_000

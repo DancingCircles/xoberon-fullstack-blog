@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { sendHeartbeat } from '../../services/mockRuntime'
+import { sendHeartbeat } from '../../services/runtime'
 import { getAuthToken } from '../../services/api'
 
 const HEARTBEAT_INTERVAL = 30_000

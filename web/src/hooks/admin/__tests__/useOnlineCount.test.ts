@@ -1,7 +1,7 @@
 import { renderHook, waitFor, act } from '@testing-library/react'
 import { useOnlineCount } from '../useOnlineCount'
 
-vi.mock('../../../services/mockRuntime', () => ({
+vi.mock('../../../services/runtime', () => ({
   fetchOnlineCount: vi.fn(() => Promise.resolve(5)),
 }))
 

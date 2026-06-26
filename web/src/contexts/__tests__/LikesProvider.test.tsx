@@ -4,12 +4,12 @@ import { LikesProvider } from '../likes/LikesProvider'
 import { useLikes } from '../../hooks/social/useLikes'
 import type { ReactNode } from 'react'
 
-vi.mock('../../services/mockRuntime', () => ({
+vi.mock('../../services/runtime', () => ({
   togglePostLike: vi.fn(() => Promise.resolve({ liked: true, likeCount: 1 })),
   toggleEssayLike: vi.fn(() => Promise.resolve({ liked: true, likeCount: 1 })),
 }))
 
-import { togglePostLike as apiTogglePostLike, toggleEssayLike as apiToggleEssayLike } from '../../services/mockRuntime'
+import { togglePostLike as apiTogglePostLike, toggleEssayLike as apiToggleEssayLike } from '../../services/runtime'
 
 function wrapper({ children }: { children: ReactNode }) {
   return <LikesProvider>{children}</LikesProvider>

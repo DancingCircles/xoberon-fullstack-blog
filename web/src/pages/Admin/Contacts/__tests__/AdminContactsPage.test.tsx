@@ -2,7 +2,7 @@ import { screen, waitFor } from '@testing-library/react'
 import { renderWithProviders } from '../../../../test/test-utils'
 import AdminContactsPage from '../AdminContactsPage'
 
-vi.mock('../../../../services/mockRuntime', () => ({
+vi.mock('../../../../services/runtime', () => ({
   fetchAdminContacts: vi.fn(() =>
     Promise.resolve({ items: [], total: 0 })
   ),

@@ -4,7 +4,7 @@ import SearchResultsPage from '../SearchResultsPage'
 
 import '../../../test/mocks/gsap'
 
-vi.mock('../../../services/mockRuntime', () => ({
+vi.mock('../../../services/runtime', () => ({
   fetchPosts: vi.fn(() => Promise.resolve({ items: [], total: 0 })),
   fetchEssays: vi.fn(() => Promise.resolve({ items: [], total: 0 })),
   searchUsers: vi.fn(() => Promise.resolve([])),

@@ -7,7 +7,7 @@ import type { BlogPost } from '../../../../assets/data/mockData'
 import '../../../../test/mocks/gsap'
 import '../../../../test/mocks/react-markdown'
 
-vi.mock('../../../../services/mockRuntime', () => ({
+vi.mock('../../../../services/runtime', () => ({
   fetchComments: vi.fn(() => Promise.resolve([])),
   createComment: vi.fn(),
   recordView: vi.fn(() => Promise.resolve()),

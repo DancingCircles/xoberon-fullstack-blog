@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import gsap from 'gsap'
 import { useBodyScrollLock } from '../../../hooks/scroll/useBodyScrollLock'
 import { useToast } from '../../../hooks/social/useToast'
-import { submitContact } from '../../../services/mockRuntime'
+import { submitContact } from '../../../services/runtime'
 import FormSuccessOverlay from '../../Common/FormSuccessOverlay'
 import './ContactModal.css'
 

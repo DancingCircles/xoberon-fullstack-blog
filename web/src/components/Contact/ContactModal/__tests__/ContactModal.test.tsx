@@ -5,7 +5,7 @@ import ContactModal from '../ContactModal'
 
 import '../../../../test/mocks/gsap'
 
-vi.mock('../../../../services/mockRuntime', () => ({
+vi.mock('../../../../services/runtime', () => ({
   submitContact: vi.fn(() => Promise.resolve()),
 }))
 

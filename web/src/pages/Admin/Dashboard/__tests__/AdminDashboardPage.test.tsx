@@ -2,7 +2,7 @@ import { screen, waitFor } from '@testing-library/react'
 import { renderWithProviders } from '../../../../test/test-utils'
 import AdminDashboardPage from '../AdminDashboardPage'
 
-vi.mock('../../../../services/mockRuntime', () => ({
+vi.mock('../../../../services/runtime', () => ({
   fetchAdminStats: vi.fn(() =>
     Promise.resolve({
       totalUsers: 42,

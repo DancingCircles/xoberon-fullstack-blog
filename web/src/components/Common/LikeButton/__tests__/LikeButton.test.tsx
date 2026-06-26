@@ -5,12 +5,12 @@ import LikeButton from '../LikeButton'
 
 import '../../../../test/mocks/gsap'
 
-vi.mock('../../../../services/mockRuntime', () => ({
+vi.mock('../../../../services/runtime', () => ({
   togglePostLike: vi.fn(() => Promise.resolve({ liked: true, likeCount: 1 })),
   toggleEssayLike: vi.fn(() => Promise.resolve({ liked: true, likeCount: 1 })),
 }))
 
-import { togglePostLike as apiTogglePostLike, toggleEssayLike as apiToggleEssayLike } from '../../../../services/mockRuntime'
+import { togglePostLike as apiTogglePostLike, toggleEssayLike as apiToggleEssayLike } from '../../../../services/runtime'
 
 describe('LikeButton', () => {
   beforeEach(() => {

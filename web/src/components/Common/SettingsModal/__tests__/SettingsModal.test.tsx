@@ -5,7 +5,7 @@ import SettingsModal from '../SettingsModal'
 
 import '../../../../test/mocks/gsap'
 
-vi.mock('../../../../services/mockRuntime', () => ({
+vi.mock('../../../../services/runtime', () => ({
   changePasswordApi: vi.fn(),
 }))
 

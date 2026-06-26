@@ -2,7 +2,7 @@ import { screen, waitFor } from '@testing-library/react'
 import { renderWithProviders } from '../../../../test/test-utils'
 import AdminUsersPage from '../AdminUsersPage'
 
-vi.mock('../../../../services/mockRuntime', () => ({
+vi.mock('../../../../services/runtime', () => ({
   fetchAdminUsers: vi.fn(() =>
     Promise.resolve({ items: [], total: 0 })
   ),

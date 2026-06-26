@@ -20,7 +20,7 @@ const fakeEssays: EssayItem[] = [
   },
 ]
 
-vi.mock('../../services/mockRuntime', () => ({
+vi.mock('../../services/runtime', () => ({
   fetchPosts: vi.fn(() => Promise.resolve({ items: fakePosts, total: 1 })),
   fetchEssays: vi.fn(() => Promise.resolve({ items: fakeEssays, total: 1 })),
   createPost: vi.fn(),
@@ -31,7 +31,7 @@ vi.mock('../../services/api', () => ({
   friendlyErrorMessage: vi.fn((_: unknown, fb: string) => fb),
 }))
 
-import * as mockRuntime from '../../services/mockRuntime'
+import * as mockRuntime from '../../services/runtime'
 
 const mockToast = {
   success: vi.fn(),

@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import DataTable, { type Column } from '../../../components/Admin/DataTable'
-import { fetchAdminContacts, markContactRead, type AdminContact } from '../../../services/mockRuntime'
+import { fetchAdminContacts, markContactRead, type AdminContact } from '../../../services/runtime'
 import { useToast } from '../../../hooks/social/useToast'
 import { friendlyErrorMessage } from '../../../services/api'
 import './AdminContactsPage.css'

@@ -2,7 +2,7 @@ import { screen, waitFor } from '@testing-library/react'
 import { renderWithProviders } from '../../../../test/test-utils'
 import AdminReviewsPage from '../AdminReviewsPage'
 
-vi.mock('../../../../services/mockRuntime', () => ({
+vi.mock('../../../../services/runtime', () => ({
   fetchAdminReviews: vi.fn(() => Promise.resolve([])),
   reviewApprove: vi.fn(),
   reviewReject: vi.fn(),

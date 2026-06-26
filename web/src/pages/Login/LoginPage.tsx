@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/auth/useAuth'
 import { useToast } from '../../hooks/social/useToast'
-import { fetchCaptcha } from '../../services/mockRuntime'
+import { fetchCaptcha } from '../../services/runtime'
 import './LoginPage.css'
 
 function validateRegisterPassword(password: string): string | null {

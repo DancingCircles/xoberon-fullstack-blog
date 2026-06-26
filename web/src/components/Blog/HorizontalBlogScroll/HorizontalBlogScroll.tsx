@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, useLayoutEffect, useCallback } from 'react
 import gsap from 'gsap'
 import type { BlogPost } from '../../../assets/data/mockData'
 import { useData } from '../../../hooks/auth/useData'
-import { fetchRecommendations } from '../../../services/mockRuntime'
+import { fetchRecommendations } from '../../../services/runtime'
 import { useLenis } from '../../../hooks/scroll/useLenis'
 import BlogModal from '../BlogModal'
 import BlogCard from '../BlogCard'

@@ -110,6 +110,16 @@ async function request<T>(path: string, options?: RequestOptions): Promise<T> {
       throw new ApiError(res.status, 'HTTP', body)
     }
 
+    if (res.status === 204) {
+      return undefined as T
+    }
+
+    const contentType = res.headers?.get?.('content-type')
+    if (contentType && !contentType.includes('application/json')) {
+      const text = await res.text().catch(() => '')
+      return text as T
+    }
+
     return res.json() as Promise<T>
   } catch (err) {
     if (err instanceof ApiError) throw err

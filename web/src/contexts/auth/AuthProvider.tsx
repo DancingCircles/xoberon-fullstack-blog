@@ -9,7 +9,7 @@ import {
   registerApi,
   logoutApi,
   updateProfileApi,
-} from '../../services/mockRuntime'
+} from '../../services/runtime'
 import type { UserProfile } from '../../assets/data/types'
 
 const USER_STORAGE_KEY = 'xoberon-user'

@@ -5,7 +5,7 @@ import gsap from 'gsap'
 import { useBodyScrollLock } from '../../../hooks/scroll/useBodyScrollLock'
 import { useToast } from '../../../hooks/social/useToast'
 import { useAuth } from '../../../hooks/auth/useAuth'
-import { changePasswordApi } from '../../../services/mockRuntime'
+import { changePasswordApi } from '../../../services/runtime'
 import { friendlyErrorMessage } from '../../../services/api'
 import './SettingsModal.css'
 

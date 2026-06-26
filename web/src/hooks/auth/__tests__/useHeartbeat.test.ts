@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react'
 import { useHeartbeat } from '../useHeartbeat'
 
-vi.mock('../../../services/mockRuntime', () => ({
+vi.mock('../../../services/runtime', () => ({
   sendHeartbeat: vi.fn(() => Promise.resolve()),
 }))
 
@@ -14,7 +14,7 @@ describe('useHeartbeat', () => {
   afterEach(() => vi.useRealTimers())
 
   it('应该立即发送一次心跳', async () => {
-    const { sendHeartbeat } = await import('../../../services/mockRuntime')
+    const { sendHeartbeat } = await import('../../../services/runtime')
     renderHook(() => useHeartbeat())
     expect(sendHeartbeat).toHaveBeenCalledTimes(1)
   })

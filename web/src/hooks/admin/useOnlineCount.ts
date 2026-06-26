@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { fetchOnlineCount } from '../../services/mockRuntime'
+import { fetchOnlineCount } from '../../services/runtime'
 
 /**
  * 每 intervalMs 毫秒轮询后端在线人数接口，返回真实数据。

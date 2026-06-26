@@ -5,7 +5,7 @@ import HorizontalBlogScroll from '../HorizontalBlogScroll'
 import '../../../../test/mocks/gsap'
 import '../../../../test/mocks/lenis'
 
-vi.mock('../../../../services/mockRuntime', () => ({
+vi.mock('../../../../services/runtime', () => ({
   fetchRecommendations: vi.fn(() => Promise.resolve([])),
 }))
 

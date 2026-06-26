@@ -6,7 +6,7 @@ import { useAuth } from '../../hooks/auth/useAuth'
 import { ToastContext } from '../toast/ToastContext'
 import type { ReactNode } from 'react'
 
-vi.mock('../../services/mockRuntime', () => ({
+vi.mock('../../services/runtime', () => ({
   loginApi: vi.fn(),
   registerApi: vi.fn(),
   logoutApi: vi.fn(() => Promise.resolve()),
@@ -19,7 +19,7 @@ vi.mock('../../services/api', () => ({
   friendlyErrorMessage: vi.fn((_err: unknown, fallback: string) => fallback),
 }))
 
-import { loginApi, registerApi } from '../../services/mockRuntime'
+import { loginApi, registerApi } from '../../services/runtime'
 
 const mockUser = {
   id: 'u1',

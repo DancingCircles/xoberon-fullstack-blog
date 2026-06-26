@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, type ReactNode } from 'react'
 import { LikesContext } from './LikesContext'
-import { togglePostLike as apiTogglePostLike, toggleEssayLike as apiToggleEssayLike } from '../../services/mockRuntime'
+import { togglePostLike as apiTogglePostLike, toggleEssayLike as apiToggleEssayLike } from '../../services/runtime'
 
 const STORAGE_KEY_POSTS = 'xoberon-liked-posts'
 const STORAGE_KEY_ESSAYS = 'xoberon-liked-essays'

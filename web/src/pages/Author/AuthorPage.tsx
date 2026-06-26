@@ -9,7 +9,7 @@ import { formatDate } from '../../utils/dateUtils'
 import { useLikes } from '../../hooks/social/useLikes'
 import BlogModal from '../../components/Blog/BlogModal'
 import EssayModal from '../../components/Common/EssayModal'
-import { fetchUserProfile, deletePost, deleteEssay } from '../../services/mockRuntime'
+import { fetchUserProfile, deletePost, deleteEssay } from '../../services/runtime'
 import { friendlyErrorMessage } from '../../services/api'
 import './AuthorPage.css'
 

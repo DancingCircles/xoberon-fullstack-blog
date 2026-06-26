@@ -5,7 +5,7 @@ import AuthorPage from '../AuthorPage'
 
 import '../../../test/mocks/gsap'
 
-vi.mock('../../../services/mockRuntime', () => ({
+vi.mock('../../../services/runtime', () => ({
   fetchUserProfile: vi.fn(() =>
     Promise.resolve({
       id: 'u1',
