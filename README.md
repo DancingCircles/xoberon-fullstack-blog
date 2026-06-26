@@ -1,27 +1,42 @@
-# XOBERON Fullstack Blog
+# Motionfolio Fullstack
 
-XOBERON 的全站发布版，包含已经对接后端 API 的前端应用和 Go 后端服务。这个仓库用于展示完整的前后端项目结构；如果只需要独立前端或独立后端，请分别使用 `xoberon-web` 和 `xoberon-server`。
+<p align="center">
+  <a href="#中文"><img alt="中文" src="https://img.shields.io/badge/README-%E4%B8%AD%E6%96%87-111111?style=for-the-badge"></a>
+  <a href="#english"><img alt="English" src="https://img.shields.io/badge/README-English-111111?style=for-the-badge"></a>
+</p>
 
-## 版本定位
+<p align="center">
+  <a href="https://blog.xoberon.com/home"><img alt="Live Demo" src="https://img.shields.io/badge/Live%20Demo-blog.xoberon.com-0ea5e9?style=flat-square"></a>
+  <img alt="Frontend" src="https://img.shields.io/badge/frontend-React%20%2B%20Vite-61dafb?style=flat-square">
+  <img alt="Backend" src="https://img.shields.io/badge/backend-Go%20%2B%20Gin-00add8?style=flat-square">
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-111111?style=flat-square">
+</p>
 
-- 发布版本：`v1.0.0`
-- 发布形态：全站版本
-- 前端：React、TypeScript、Vite
-- 后端：Go、Gin、PostgreSQL、Redis
-- 默认数据模式：前端请求后端 API
-- 可选数据模式：`VITE_DATA_MODE=mock` 时使用前端内置 mock 数据
+## 中文
 
-## 目录结构
+Motionfolio Fullstack 是全站版作品集与博客平台：前端使用 React、TypeScript、Vite、GSAP 和 Three.js，后端使用 Go、Gin、PostgreSQL 与 Redis。它保留动效型前端体验，同时提供真实 API、用户认证、内容发布、评论、点赞、联系消息、后台审核与监控配置。
+
+**在线预览**：<https://blog.xoberon.com/home>
+
+### 适合展示
+
+- React/Vite 前端与 Go/Gin API 的完整项目结构
+- PostgreSQL 迁移、Redis 缓存、JWT 认证和内容审核流程
+- 文章、随笔、评论、点赞、联系表单和后台管理工作流
+- 前端支持 `api` 与 `mock` 两种数据模式，便于本地演示
+- Docker Compose、Nginx、Prometheus/Grafana 配置示例
+
+### 目录结构
 
 ```text
-xoberon-fullstack-blog/
-├─ web/      # 前端应用，默认对接 /api
-└─ server/   # Go API 服务、数据库迁移、Docker 配置和监控配置
+motionfolio-fullstack/
+├── web/      # React frontend, defaults to API mode
+└── server/   # Go API, migrations, Docker and monitoring config
 ```
 
-## 快速开始
+### 快速开始
 
-### 1. 启动后端
+启动后端：
 
 ```bash
 cd server
@@ -30,21 +45,13 @@ docker compose up -d postgres redis
 go run ./cmd/api
 ```
 
-后端健康检查：
+健康检查：
 
 ```text
 http://localhost:8080/api/health
 ```
 
-如果本机没有安装 Go，也可以直接使用 Docker Compose 启动完整后端栈：
-
-```bash
-cd server
-cp .env.example .env
-docker compose up -d
-```
-
-### 2. 启动前端
+启动前端：
 
 ```bash
 cd web
@@ -53,67 +60,134 @@ npm install
 npm run dev
 ```
 
-默认前端地址：
+默认地址：
 
 ```text
-http://127.0.0.1:5173
+Frontend: http://127.0.0.1:5173
+API:      http://localhost:8080/api
 ```
 
-默认 API 地址：
+### 数据模式
 
-```text
-http://localhost:8080/api
-```
-
-## 前端数据模式
-
-`web/.env.example` 默认使用真实 API：
+`web/.env.example` 默认连接 Go API：
 
 ```env
 VITE_DATA_MODE=api
 VITE_API_BASE_URL=http://localhost:8080/api
 ```
 
-如果只想临时预览前端，不启动后端，可以改成：
+如果只想临时预览前端，可以改为：
 
 ```env
 VITE_DATA_MODE=mock
 ```
 
-mock 模式会使用 `web/src/services/mockRuntime.ts` 和浏览器 `localStorage`。API 模式会通过 `web/src/services/realRuntime.ts` 对接 `server` 中的真实接口。
-
-## 相关仓库
-
-| 仓库 | 形态 | 说明 |
-| --- | --- | --- |
-| `xoberon-web` | 独立前端 | 纯 mock 数据，适合前端展示 |
-| `xoberon-server` | 独立后端 | Go API 服务，适合后端发布 |
-| `xoberon-fullstack-blog` | 全站 | 前端默认连接后端 API |
-
-## 常用命令
-
-前端：
+### 常用命令
 
 ```bash
+# frontend
 cd web
-npm run build
 npm run lint
 npm run test:run
-```
+npm run build
 
-后端：
-
-```bash
+# backend
 cd server
 go test ./...
 go run ./cmd/api
 docker compose up -d
 ```
 
-## 公开发布说明
+前端独立展示版：<https://github.com/DancingCircles/motionfolio-web>
 
-仓库中的 `.env.example` 和 Nginx 配置只保留占位示例，不包含真实生产密钥、真实生产域名或私有部署信息。部署前需要在自己的服务器或 CI/CD 环境中补齐实际环境变量、数据库密码、JWT 密钥、证书路径和允许的 CORS 域名。
+作者署名：XOBERON
 
-## License
+## English
 
-MIT
+Motionfolio Fullstack is the API-backed edition of the animated portfolio and journal platform. The frontend is built with React, TypeScript, Vite, GSAP, and Three.js; the backend is built with Go, Gin, PostgreSQL, and Redis. It keeps the motion-focused portfolio experience while adding real APIs, authentication, publishing, comments, likes, contact messages, admin review workflows, and monitoring configuration.
+
+**Live demo**: <https://blog.xoberon.com/home>
+
+### Why It Stands Out
+
+- Complete React/Vite frontend and Go/Gin API structure
+- PostgreSQL migrations, Redis caching, JWT auth, and moderation flow
+- Posts, notes, comments, likes, contact messages, and admin workflows
+- Frontend supports both `api` and `mock` data modes for local demos
+- Docker Compose, Nginx, Prometheus, and Grafana configuration examples
+
+### Structure
+
+```text
+motionfolio-fullstack/
+├── web/      # React frontend, defaults to API mode
+└── server/   # Go API, migrations, Docker and monitoring config
+```
+
+### Getting Started
+
+Start the backend:
+
+```bash
+cd server
+cp .env.example .env
+docker compose up -d postgres redis
+go run ./cmd/api
+```
+
+Health check:
+
+```text
+http://localhost:8080/api/health
+```
+
+Start the frontend:
+
+```bash
+cd web
+cp .env.example .env
+npm install
+npm run dev
+```
+
+Default URLs:
+
+```text
+Frontend: http://127.0.0.1:5173
+API:      http://localhost:8080/api
+```
+
+### Data Modes
+
+`web/.env.example` defaults to the Go API:
+
+```env
+VITE_DATA_MODE=api
+VITE_API_BASE_URL=http://localhost:8080/api
+```
+
+For a frontend-only preview:
+
+```env
+VITE_DATA_MODE=mock
+```
+
+### Useful Commands
+
+```bash
+# frontend
+cd web
+npm run lint
+npm run test:run
+npm run build
+
+# backend
+cd server
+go test ./...
+go run ./cmd/api
+docker compose up -d
+```
+
+Frontend-only edition: <https://github.com/DancingCircles/motionfolio-web>
+
+Signature: XOBERON
