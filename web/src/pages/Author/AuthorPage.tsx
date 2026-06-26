@@ -30,8 +30,10 @@ export default function AuthorPage() {
 
   useEffect(() => {
     let cancelled = false
-    setIsLoading(true)
+
     const loadProfile = async () => {
+      setIsLoading(true)
+
       if (!authorId) {
         if (!cancelled) {
           setFetchedUser(null)
@@ -54,9 +56,15 @@ export default function AuthorPage() {
         }
       }
     }
-    loadProfile()
 
-    return () => { cancelled = true }
+    const timeoutId = window.setTimeout(() => {
+      void loadProfile()
+    }, 0)
+
+    return () => {
+      cancelled = true
+      window.clearTimeout(timeoutId)
+    }
   }, [authorId])
 
   const user = useMemo(() => {

@@ -46,7 +46,11 @@ export default function AdminContactsPage() {
   }, [toast])
 
   useEffect(() => {
-    loadContacts()
+    const timeoutId = window.setTimeout(() => {
+      void loadContacts()
+    }, 0)
+
+    return () => window.clearTimeout(timeoutId)
   }, [loadContacts])
 
   const filtered = useMemo(() => {

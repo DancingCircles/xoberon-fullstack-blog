@@ -59,7 +59,11 @@ export default function AdminUsersPage() {
   }, [toast])
 
   useEffect(() => {
-    loadUsers()
+    const timeoutId = window.setTimeout(() => {
+      void loadUsers()
+    }, 0)
+
+    return () => window.clearTimeout(timeoutId)
   }, [loadUsers])
 
   const filtered = useMemo(() => {
