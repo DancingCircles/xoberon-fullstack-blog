@@ -11,7 +11,9 @@ const lenisMock = {
 }
 
 vi.mock('lenis', () => ({
-  default: vi.fn(() => lenisMock),
+  default: vi.fn(function LenisMock() {
+    return lenisMock
+  }),
 }))
 
 export { lenisMock }
