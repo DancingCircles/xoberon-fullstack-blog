@@ -7,6 +7,7 @@ import { useToast } from '../../../hooks/social/useToast'
 import { useAuth } from '../../../hooks/auth/useAuth'
 import { changePasswordApi } from '../../../services/runtime'
 import { friendlyErrorMessage } from '../../../services/api'
+import AvatarImage from '../AvatarImage'
 import './SettingsModal.css'
 
 type SettingsSection = 'profile' | 'account'
@@ -202,10 +203,11 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               <h3 className="settings-section-title">个人资料</h3>
 
               <div className="settings-avatar-row">
-                <img
+                <AvatarImage
                   className="settings-avatar-preview"
-                  src={avatarUrl || 'https://i.pravatar.cc/150?u=default'}
+                  src={avatarUrl}
                   alt="Avatar preview"
+                  fallbackKey={currentUser?.handle ?? currentUser?.id ?? 'settings-preview'}
                 />
                 <button className="settings-avatar-btn" onClick={handleAvatarClick}>
                   上传头像

@@ -3,6 +3,7 @@ import { blogPosts as seedPosts } from '../assets/data/blogPosts'
 import { essays as seedEssays } from '../assets/data/essays'
 import { users as seedUsers } from '../assets/data/users'
 import { clearAuthToken, getAuthToken, setAuthToken } from './api'
+import { avatarSrcFromKey, resolveAvatarSrc } from '../utils/avatar'
 
 export interface PaginationParams {
   page?: number
@@ -86,7 +87,7 @@ interface MockUserRecord extends UserProfile {
 }
 
 interface MockRuntimeState {
-  version: 1
+  version: number
   posts: BlogPost[]
   essays: EssayItem[]
   users: MockUserRecord[]
@@ -102,7 +103,7 @@ const POST_LIKES_KEY = 'xoberon-liked-posts'
 const ESSAY_LIKES_KEY = 'xoberon-liked-essays'
 const CAPTCHA_STORAGE_KEY = 'xoberon-mock-captcha'
 const DEFAULT_PASSWORD = 'Password123'
-const VERSION = 1
+const VERSION = 3
 const ONLINE_WINDOW_MS = 2 * 60 * 1000
 
 function clone<T>(value: T): T {
@@ -196,13 +197,14 @@ function currentUserOrThrow(state: MockRuntimeState): MockUserRecord {
 function withDynamicCounts(state: MockRuntimeState, user: MockUserRecord): MockUserRecord {
   const postCount = state.posts.filter(post => post.author.handle === user.handle).length
   const essayCount = state.essays.filter(essay => essay.author.handle === user.handle).length
-  return { ...user, postCount, essayCount }
+  return normalizeUserRecordAvatar({ ...user, postCount, essayCount })
 }
 
 function syncAuthorSnapshot<T extends { author: { name: string; avatar: string; handle: string } }>(
   items: T[],
   user: MockUserRecord,
 ): T[] {
+  const avatar = resolveAvatarSrc(user.avatar, user.handle || user.id || user.name)
   return items.map(item =>
     item.author.handle === user.handle
       ? {
@@ -210,7 +212,7 @@ function syncAuthorSnapshot<T extends { author: { name: string; avatar: string; 
           author: {
             ...item.author,
             name: user.name,
-            avatar: user.avatar,
+            avatar,
             handle: user.handle,
           },
         }
@@ -219,6 +221,7 @@ function syncAuthorSnapshot<T extends { author: { name: string; avatar: string; 
 }
 
 function syncCommentAuthorSnapshot(posts: BlogPost[], user: MockUserRecord): BlogPost[] {
+  const avatar = resolveAvatarSrc(user.avatar, user.handle || user.id || user.name)
   return posts.map(post => ({
     ...post,
     comments: post.comments.map(comment =>
@@ -226,11 +229,59 @@ function syncCommentAuthorSnapshot(posts: BlogPost[], user: MockUserRecord): Blo
         ? {
             ...comment,
             author: user.name,
-            avatar: user.avatar,
+            avatar,
           }
         : comment,
     ),
   }))
+}
+
+function normalizeUserRecordAvatar(user: MockUserRecord): MockUserRecord {
+  return {
+    ...user,
+    avatar: resolveAvatarSrc(user.avatar, user.handle || user.id || user.name),
+  }
+}
+
+function normalizePostAvatar(post: BlogPost): BlogPost {
+  return {
+    ...post,
+    author: {
+      ...post.author,
+      avatar: resolveAvatarSrc(post.author.avatar, post.author.handle || post.author.name),
+    },
+    comments: post.comments.map(comment => ({
+      ...comment,
+      avatar: resolveAvatarSrc(comment.avatar, comment.authorId || comment.author),
+    })),
+  }
+}
+
+function normalizeEssayAvatar(essay: EssayItem): EssayItem {
+  return {
+    ...essay,
+    author: {
+      ...essay.author,
+      avatar: resolveAvatarSrc(essay.author.avatar, essay.author.handle || essay.author.name),
+    },
+  }
+}
+
+function normalizeReviewAvatar(review: ReviewItem): ReviewItem {
+  return {
+    ...review,
+    authorAvatar: resolveAvatarSrc(review.authorAvatar, review.authorName || review.contentId),
+  }
+}
+
+function normalizeStateAvatars(state: MockRuntimeState): MockRuntimeState {
+  return {
+    ...state,
+    posts: state.posts.map(normalizePostAvatar),
+    essays: state.essays.map(normalizeEssayAvatar),
+    users: state.users.map(normalizeUserRecordAvatar),
+    reviews: state.reviews.map(normalizeReviewAvatar),
+  }
 }
 
 function buildInitialUsers(): MockUserRecord[] {
@@ -239,6 +290,7 @@ function buildInitialUsers(): MockUserRecord[] {
   seedUsers.forEach((user, index) => {
     seeded.set(user.handle, {
       ...clone(user),
+      avatar: resolveAvatarSrc(user.avatar, user.handle || user.name),
       email: user.email ?? `${normalizeHandle(user.handle)}@example.com`,
       password: DEFAULT_PASSWORD,
       createdAt: user.createdAt ?? new Date(Date.UTC(2025, index % 12, index + 1)).toISOString(),
@@ -255,7 +307,7 @@ function buildInitialUsers(): MockUserRecord[] {
       id: `mock-user-${normalizeHandle(handle)}`,
       name: item.author.name,
       handle,
-      avatar: item.author.avatar,
+      avatar: resolveAvatarSrc(item.author.avatar, handle),
       bio: `${item.author.name} 的公开主页演示数据。`,
       role: 'user',
       postCount: 0,
@@ -360,8 +412,8 @@ function buildInitialActivities(): ActivityLog[] {
 }
 
 function createSeedState(): MockRuntimeState {
-  const posts = clone(seedPosts)
-  const essays = clone(seedEssays)
+  const posts = clone(seedPosts).map(normalizePostAvatar)
+  const essays = clone(seedEssays).map(normalizeEssayAvatar)
   return {
     version: VERSION,
     posts,
@@ -391,14 +443,56 @@ function createSeedState(): MockRuntimeState {
   }
 }
 
-function loadState(): MockRuntimeState {
-  const parsed = readJson<MockRuntimeState>(STATE_STORAGE_KEY)
-  if (!parsed || parsed.version !== VERSION) {
-    const seeded = createSeedState()
-    saveState(seeded)
-    return seeded
+function isValidStateShape(value: unknown): value is MockRuntimeState {
+  if (!value || typeof value !== 'object') return false
+  const candidate = value as Partial<MockRuntimeState>
+  return (
+    typeof candidate.version === 'number' &&
+    Array.isArray(candidate.posts) &&
+    Array.isArray(candidate.essays) &&
+    Array.isArray(candidate.users) &&
+    Array.isArray(candidate.contacts) &&
+    Array.isArray(candidate.reviews) &&
+    Array.isArray(candidate.activities) &&
+    !!candidate.heartbeats &&
+    typeof candidate.heartbeats === 'object'
+  )
+}
+
+function shouldReseedState(state: MockRuntimeState): boolean {
+  // Reseed broken or empty mock stores so preview pages do not stay blank.
+  const hasNoContent = state.posts.length === 0 && state.essays.length === 0
+  const hasNoUsers = state.users.length === 0
+  return hasNoContent || hasNoUsers
+}
+
+function migrateState(parsed: unknown): MockRuntimeState {
+  if (!isValidStateShape(parsed)) {
+    return createSeedState()
   }
-  return parsed
+
+  if (shouldReseedState(parsed)) {
+    return createSeedState()
+  }
+
+  return normalizeStateAvatars({
+    ...parsed,
+    version: VERSION,
+    heartbeats: parsed.heartbeats ?? {},
+  })
+}
+
+function loadState(): MockRuntimeState {
+  const parsed = readJson<unknown>(STATE_STORAGE_KEY)
+  const state = (!parsed || !isValidStateShape(parsed) || parsed.version !== VERSION || shouldReseedState(parsed))
+    ? migrateState(parsed)
+    : parsed
+
+  if (!parsed || state !== parsed) {
+    saveState(state)
+  }
+
+  return state
 }
 
 function saveState(state: MockRuntimeState) {
@@ -537,7 +631,7 @@ export async function registerApi(
       id: nextId('user'),
       name: name.trim() || username.trim(),
       handle: normalizedHandle,
-      avatar: `https://i.pravatar.cc/150?u=${encodeURIComponent(normalizedHandle)}`,
+      avatar: avatarSrcFromKey(normalizedHandle),
       bio: '这是一个本地 mock 账号，可用于体验公开版站点的交互流程。',
       role: 'user',
       postCount: 0,
@@ -568,7 +662,7 @@ export async function updateProfileApi(
       ...current,
       name: data.name.trim() || current.name,
       bio: data.bio?.trim() || current.bio,
-      avatar: data.avatar?.trim() || current.avatar,
+      avatar: resolveAvatarSrc(data.avatar?.trim() || current.avatar, current.handle || current.id || current.name),
     }
     state.users = state.users.map(user => (user.id === current.id ? nextUser : user))
     syncUserSnapshot(state, nextUser)
@@ -624,6 +718,7 @@ export async function createPost(data: {
 }): Promise<BlogPost> {
   return mutateState(state => {
     const user = currentUserOrThrow(state)
+    const userAvatar = resolveAvatarSrc(user.avatar, user.handle || user.id || user.name)
     const post: BlogPost = {
       id: nextId('post'),
       title: data.title.trim(),
@@ -637,7 +732,7 @@ export async function createPost(data: {
       likes: 0,
       author: {
         name: user.name,
-        avatar: user.avatar,
+        avatar: userAvatar,
         handle: user.handle,
       },
       comments: [],
@@ -652,7 +747,7 @@ export async function createPost(data: {
       excerpt: post.excerpt,
       fullContent: post.content,
       authorName: user.name,
-      authorAvatar: user.avatar,
+      authorAvatar: userAvatar,
       createdAt: new Date().toISOString(),
       status: 'pending',
       aiDecision: 'review',
@@ -697,11 +792,12 @@ export async function fetchComments(postId: string): Promise<Comment[]> {
 export async function createComment(postId: string, content: string): Promise<Comment> {
   return mutateState(state => {
     const user = currentUserOrThrow(state)
+    const userAvatar = resolveAvatarSrc(user.avatar, user.handle || user.id || user.name)
     const comment: Comment = {
       id: nextId('comment'),
       authorId: user.id,
       author: user.name,
-      avatar: user.avatar,
+      avatar: userAvatar,
       date: formatDisplayDate(),
       content: content.trim(),
     }
@@ -721,7 +817,7 @@ export async function createComment(postId: string, content: string): Promise<Co
       excerpt: comment.content,
       fullContent: comment.content,
       authorName: user.name,
-      authorAvatar: user.avatar,
+      authorAvatar: userAvatar,
       createdAt: new Date().toISOString(),
       status: 'pending',
       aiDecision: 'review',
@@ -786,6 +882,7 @@ export async function createEssay(data: {
 }): Promise<EssayItem> {
   return mutateState(state => {
     const user = currentUserOrThrow(state)
+    const userAvatar = resolveAvatarSrc(user.avatar, user.handle || user.id || user.name)
     const essay: EssayItem = {
       id: nextId('essay'),
       title: data.title.trim(),
@@ -795,7 +892,7 @@ export async function createEssay(data: {
       likes: 0,
       author: {
         name: user.name,
-        avatar: user.avatar,
+        avatar: userAvatar,
         handle: user.handle,
       },
     }
@@ -809,7 +906,7 @@ export async function createEssay(data: {
       excerpt: essay.excerpt,
       fullContent: essay.content,
       authorName: user.name,
-      authorAvatar: user.avatar,
+      authorAvatar: userAvatar,
       createdAt: new Date().toISOString(),
       status: 'pending',
       aiDecision: 'review',

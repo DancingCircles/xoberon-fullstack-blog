@@ -13,6 +13,7 @@ import { friendlyErrorMessage } from '../../../services/api'
 import MarkdownRenderer from '../../Common/MarkdownRenderer'
 import RelatedPosts from '../RelatedPosts'
 import LikeButton from '../../Common/LikeButton'
+import AvatarImage from '../../Common/AvatarImage'
 import './BlogModal.css'
 
 interface BlogModalProps {
@@ -226,10 +227,11 @@ export default function BlogModal({ post, isOpen, onClose, onPostClick }: BlogMo
             <h2 className="blog-modal-title">{post.title}</h2>
 
             <div className="blog-modal-topbar">
-              <img 
+              <AvatarImage
                 src={post.author.avatar} 
                 alt={post.author.name} 
                 className="author-avatar author-avatar--clickable" 
+                fallbackKey={post.author.handle}
                 onClick={handleAuthorClick}
                 title={`查看 ${post.author.name} 的主页`}
               />
@@ -323,10 +325,11 @@ export default function BlogModal({ post, isOpen, onClose, onPostClick }: BlogMo
                   }
                   return (
                   <div key={comment.id} className="comment-item">
-                    <img 
+                    <AvatarImage
                       src={comment.avatar} 
                       alt={comment.author} 
                       className="comment-avatar comment-avatar--clickable" 
+                      fallbackKey={comment.authorId || comment.author}
                       onClick={handleCommentAuthorClick}
                       title={`查看 ${comment.author} 的主页`}
                     />

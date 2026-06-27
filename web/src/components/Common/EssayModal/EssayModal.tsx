@@ -9,6 +9,7 @@ import { useToast } from '../../../hooks/social/useToast'
 import { deleteEssay } from '../../../services/runtime'
 import { friendlyErrorMessage } from '../../../services/api'
 import LikeButton from '../LikeButton'
+import AvatarImage from '../AvatarImage'
 import type { EssayItem } from '../../../assets/data/mockData'
 import './EssayModal.css'
 
@@ -114,10 +115,11 @@ export default function EssayModal({ essay, isOpen, onClose }: EssayModalProps) 
         {/* 内容区 */}
         <div className="essay-modal-scroll" ref={scrollRef}>
           <div className="essay-modal-topbar">
-            <img
+            <AvatarImage
               src={essay.author.avatar}
               alt={essay.author.name}
               className="essay-modal-avatar"
+              fallbackKey={essay.author.handle}
             />
             <span className="essay-modal-date">{essay.date}</span>
             <div className="essay-modal-topbar-right">

@@ -9,6 +9,7 @@ import type {
   FetchPostsParams,
   ReviewItem,
 } from './mockRuntime'
+import { resolveAvatarSrc } from '../utils/avatar'
 
 interface PageResult<T> {
   items: T[]
@@ -120,7 +121,7 @@ function toUser(dto: UserDto): UserProfile {
     id: dto.id,
     name: dto.name,
     handle: dto.handle,
-    avatar: dto.avatar,
+    avatar: resolveAvatarSrc(dto.avatar, dto.handle || dto.id || dto.name),
     bio: dto.bio,
     role: dto.role,
     postCount: dto.post_count ?? 0,
@@ -135,7 +136,7 @@ function toComment(dto: CommentDto): Comment {
     id: dto.id,
     authorId: dto.author_id,
     author: dto.author,
-    avatar: dto.avatar,
+    avatar: resolveAvatarSrc(dto.avatar, dto.author_id || dto.author),
     date: formatDate(dto.created_at),
     content: dto.content,
   }
@@ -155,7 +156,7 @@ function toPost(dto: PostDto): BlogPost {
     likes: dto.like_count,
     author: {
       name: dto.author_name,
-      avatar: dto.author_avatar,
+      avatar: resolveAvatarSrc(dto.author_avatar, dto.author_handle || dto.author_name),
       handle: dto.author_handle,
     },
     comments: (dto.comments ?? []).map(toComment),
@@ -172,9 +173,16 @@ function toEssay(dto: EssayDto): EssayItem {
     likes: dto.like_count,
     author: {
       name: dto.author_name,
-      avatar: dto.author_avatar,
+      avatar: resolveAvatarSrc(dto.author_avatar, dto.author_handle || dto.author_name),
       handle: dto.author_handle,
     },
+  }
+}
+
+function toReview(item: ReviewItem): ReviewItem {
+  return {
+    ...item,
+    authorAvatar: resolveAvatarSrc(item.authorAvatar, item.authorName || item.contentId),
   }
 }
 
@@ -392,7 +400,7 @@ export async function fetchAdminActivities(): Promise<ActivityLog[]> {
 }
 
 export async function fetchAdminReviews(): Promise<ReviewItem[]> {
-  return api.get<ReviewItem[]>('/v1/admin/reviews')
+  return (await api.get<ReviewItem[]>('/v1/admin/reviews')).map(toReview)
 }
 
 export async function reviewApprove(id: string): Promise<void> {

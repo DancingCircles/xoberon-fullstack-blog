@@ -7,6 +7,7 @@ import type { UserProfile, UserRole } from '../../../assets/data/types'
 import { fetchAdminUsers, updateUserRole } from '../../../services/runtime'
 import { useToast } from '../../../hooks/social/useToast'
 import { friendlyErrorMessage } from '../../../services/api'
+import AvatarImage from '../../../components/Common/AvatarImage'
 import './AdminUsersPage.css'
 
 const roleTabs: { value: UserRole | 'all'; label: string }[] = [
@@ -124,7 +125,7 @@ export default function AdminUsersPage() {
       width: '44px',
       className: 'dt-col--compact',
       render: row => (
-        <img src={row.avatar} alt={row.name} className="aup-avatar" />
+        <AvatarImage src={row.avatar} alt={row.name} className="aup-avatar" fallbackKey={row.handle} />
       ),
     },
     {

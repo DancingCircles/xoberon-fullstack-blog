@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../../hooks/auth/useAuth'
+import AvatarImage from '../../Common/AvatarImage'
 import './AdminSidebar.css'
 
 const navItems = [
@@ -84,10 +85,11 @@ export default function AdminSidebar() {
         </Link>
         {currentUser && (
           <div className="admin-sidebar__user">
-            <img
+            <AvatarImage
               src={currentUser.avatar}
               alt={currentUser.name}
               className="admin-sidebar__user-avatar"
+              fallbackKey={currentUser.handle}
             />
             <div className="admin-sidebar__user-info">
               <span className="admin-sidebar__user-name">{currentUser.name}</span>

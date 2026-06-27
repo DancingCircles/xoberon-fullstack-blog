@@ -11,6 +11,7 @@ import {
   updateProfileApi,
 } from '../../services/runtime'
 import type { UserProfile } from '../../assets/data/types'
+import { resolveAvatarSrc } from '../../utils/avatar'
 
 const USER_STORAGE_KEY = 'xoberon-user'
 
@@ -19,13 +20,22 @@ function loadStoredUser(): UserProfile | null {
     const token = getAuthToken()
     if (!token) return null
     const raw = localStorage.getItem(USER_STORAGE_KEY)
-    if (raw) return JSON.parse(raw) as UserProfile
+    if (raw) {
+      const user = JSON.parse(raw) as UserProfile
+      return {
+        ...user,
+        avatar: resolveAvatarSrc(user.avatar, user.handle || user.id || user.name),
+      }
+    }
   } catch { /* ignore */ }
   return null
 }
 
 function saveUser(user: UserProfile) {
-  localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user))
+  localStorage.setItem(USER_STORAGE_KEY, JSON.stringify({
+    ...user,
+    avatar: resolveAvatarSrc(user.avatar, user.handle || user.id || user.name),
+  }))
 }
 
 function clearStoredUser() {

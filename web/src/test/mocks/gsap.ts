@@ -24,6 +24,21 @@ const gsapMock = {
     return { ...timelineMock }
   }),
   context: vi.fn((_fn?: unknown) => ({ revert: vi.fn(), add: vi.fn(), kill: vi.fn() })),
+  matchMedia: vi.fn(() => {
+    const cleanups: Array<() => void> = []
+
+    return {
+      add: vi.fn((_query: string, callback: () => void | (() => void)) => {
+        const cleanup = callback()
+        if (typeof cleanup === 'function') {
+          cleanups.push(cleanup)
+        }
+      }),
+      revert: vi.fn(() => {
+        cleanups.splice(0).forEach(cleanup => cleanup())
+      }),
+    }
+  }),
   killTweensOf: vi.fn(),
   getProperty: vi.fn(() => 0),
   registerPlugin: vi.fn(),

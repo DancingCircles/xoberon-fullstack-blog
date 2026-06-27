@@ -6,6 +6,7 @@ import { fetchPosts, fetchEssays, searchUsers } from '../../services/runtime'
 import { formatDate } from '../../utils/dateUtils'
 import BlogModal from '../../components/Blog/BlogModal'
 import EssayModal from '../../components/Common/EssayModal'
+import AvatarImage from '../../components/Common/AvatarImage'
 import './SearchResultsPage.css'
 
 type SearchTab = 'posts' | 'notes' | 'users'
@@ -253,7 +254,7 @@ export default function SearchResultsPage() {
                 >
                   <span className="sr-cell sr-cell--idx">{String(i + 1).padStart(2, '0')}</span>
                   <span className="sr-cell sr-cell--title sr-cell--user-name">
-                    <img className="sr-avatar" src={user.avatar} alt={user.name} />
+                    <AvatarImage className="sr-avatar" src={user.avatar} alt={user.name} fallbackKey={user.handle} />
                     <span>
                       <strong>{user.name}</strong>
                       <em>{user.handle}</em>

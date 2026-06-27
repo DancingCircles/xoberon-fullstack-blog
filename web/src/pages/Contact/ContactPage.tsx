@@ -97,10 +97,10 @@ export default function ContactPage() {
       const titles = statementSection.querySelectorAll('.cp-statement-hero-line')
       const lottieContainer = statementSection.querySelector('.cp-statement-right')
       
-      // 针对移动端特殊处理：不使用 Pin 动画
-      const isMobile = window.innerWidth <= 768;
+      // 针对移动端/低高度横屏特殊处理：不使用 Pin 动画
+      const isCompactLayout = window.matchMedia('(max-width: 900px), (max-height: 560px)').matches
 
-      if (isMobile) {
+      if (isCompactLayout) {
         // 移动端：直接显示，移除隐藏样式，不绑定 ScrollTrigger
         gsap.set(lottieContainer, { x: 0, scale: 1 })
         gsap.set(titles, { opacity: 1, x: 0, filter: 'blur(0px)', scale: 1 })
@@ -165,7 +165,7 @@ export default function ContactPage() {
       const topRight = statementSection.querySelectorAll('.cp-floating-title--top-right span')
       const floatingLine = statementSection.querySelector('.cp-floating-line')
 
-      if (!isMobile) {
+      if (!isCompactLayout) {
         gsap.fromTo(staircase,
           { clipPath: 'inset(0 100% 0 0)' },
           {

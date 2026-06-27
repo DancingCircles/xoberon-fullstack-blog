@@ -9,6 +9,7 @@ import { formatDate } from '../../utils/dateUtils'
 import { useLikes } from '../../hooks/social/useLikes'
 import BlogModal from '../../components/Blog/BlogModal'
 import EssayModal from '../../components/Common/EssayModal'
+import AvatarImage from '../../components/Common/AvatarImage'
 import { fetchUserProfile, deletePost, deleteEssay } from '../../services/runtime'
 import { friendlyErrorMessage } from '../../services/api'
 import './AuthorPage.css'
@@ -240,7 +241,7 @@ export default function AuthorPage() {
             </button>
           )}
           <div className="ap-profile">
-            <img className="ap-avatar" src={user.avatar} alt={user.name} />
+            <AvatarImage className="ap-avatar" src={user.avatar} alt={user.name} fallbackKey={user.handle} />
             <div className="ap-info">
               <h1 className="ap-name">{user.name}</h1>
               <span className="ap-handle">{user.handle}</span>

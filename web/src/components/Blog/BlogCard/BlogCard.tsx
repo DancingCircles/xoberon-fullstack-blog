@@ -1,4 +1,5 @@
 import type { BlogPost } from '../../../assets/data/mockData'
+import AvatarImage from '../../Common/AvatarImage'
 
 interface BlogCardProps {
   post: BlogPost
@@ -16,10 +17,11 @@ export default function BlogCard({ post, isActive = false, showLikes = false, on
     >
       <div className="blog-card-header">
         <span className="blog-card-category">{post.category}</span>
-        <img 
+        <AvatarImage
           className="blog-card-avatar" 
           src={post.author.avatar} 
           alt={post.author.name} 
+          fallbackKey={post.author.handle}
           title={post.author.name}
         />
       </div>

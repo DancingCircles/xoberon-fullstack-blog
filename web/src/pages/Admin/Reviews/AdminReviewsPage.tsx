@@ -7,6 +7,7 @@ import { useToast } from '../../../hooks/social/useToast'
 import { fetchAdminReviews, reviewApprove, reviewReject, type ReviewItem, type ReviewStatus, type ReviewContentType, type ReviewedBy, type AIDecision } from '../../../services/runtime'
 import { useData } from '../../../hooks/auth/useData'
 import { friendlyErrorMessage } from '../../../services/api'
+import AvatarImage from '../../../components/Common/AvatarImage'
 import './AdminReviewsPage.css'
 
 const statusTabs: { value: ReviewStatus | 'all'; label: string }[] = [
@@ -183,7 +184,12 @@ export default function AdminReviewsPage() {
       width: '120px',
       render: row => (
         <div className="arp-author">
-          <img src={row.authorAvatar} alt={row.authorName} className="arp-author-avatar" />
+          <AvatarImage
+            src={row.authorAvatar}
+            alt={row.authorName}
+            className="arp-author-avatar"
+            fallbackKey={row.authorName}
+          />
           <span>{row.authorName}</span>
         </div>
       ),
@@ -363,7 +369,12 @@ export default function AdminReviewsPage() {
         {detailItem && (
           <>
             <div className="arp-detail__author">
-              <img src={detailItem.authorAvatar} alt={detailItem.authorName} className="arp-detail__avatar" />
+              <AvatarImage
+                src={detailItem.authorAvatar}
+                alt={detailItem.authorName}
+                className="arp-detail__avatar"
+                fallbackKey={detailItem.authorName}
+              />
               <span className="arp-detail__author-name">{detailItem.authorName}</span>
               <span className="arp-detail__time">{formatTime(detailItem.createdAt)}</span>
             </div>

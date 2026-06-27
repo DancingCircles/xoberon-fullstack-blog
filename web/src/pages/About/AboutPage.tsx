@@ -9,6 +9,7 @@ import { groupIntoRows, relocateNewItem } from '../../utils/blogFilters'
 import { useDragScroll } from '../../hooks/scroll/useDragScroll'
 import CategoryFilter from '../../components/Blog/CategoryFilter'
 import FloatingButton from '../../components/Common/FloatingButton'
+import AvatarImage from '../../components/Common/AvatarImage'
 import './AboutPage.css'
 
 const CARDS_PER_ROW = 6
@@ -154,10 +155,11 @@ export default function AboutPage() {
                     >
                       {/* Header: 头像 + 昵称 */}
                       <div className="essay-card__header">
-                        <img
+                        <AvatarImage
                           className="essay-card__avatar"
                           src={essay.author.avatar}
                           alt={essay.author.name}
+                          fallbackKey={essay.author.handle}
                           title={essay.author.name}
                         />
                         <span className="essay-card__author">{essay.author.name}</span>

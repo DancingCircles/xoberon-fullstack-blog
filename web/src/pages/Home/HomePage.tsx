@@ -98,11 +98,15 @@ export default function HomePage() {
   }, [])
 
   useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      const track = processTrackRef.current
-      const section = processSectionRef.current
+    const mm = gsap.matchMedia()
 
-      if (track && section) {
+    mm.add('(min-width: 901px) and (min-height: 561px)', () => {
+      const ctx = gsap.context(() => {
+        const track = processTrackRef.current
+        const section = processSectionRef.current
+
+        if (!track || !section) return
+
         const scrollDistance = () => track.scrollWidth - window.innerWidth
         // 缩短竖向滚动距离，让横向移动速度与竖向滚动体感一致
         const scrollEnd = () => scrollDistance() * 0.6
@@ -150,10 +154,26 @@ export default function HomePage() {
             }
           )
         })
-      }
-    }, processSectionRef)
+      }, processSectionRef)
 
-    return () => ctx.revert()
+      return () => ctx.revert()
+    })
+
+    mm.add('(max-width: 900px), (max-height: 560px)', () => {
+      const track = processTrackRef.current
+      if (!track) return
+
+      const cards = track.querySelectorAll('.process-card')
+      gsap.set(track, { clearProps: 'transform' })
+      gsap.set(cards, { clearProps: 'transform,opacity' })
+
+      return () => {
+        gsap.set(track, { clearProps: 'transform' })
+        gsap.set(cards, { clearProps: 'transform,opacity' })
+      }
+    })
+
+    return () => mm.revert()
   }, [])
 
   // Team section 动画
