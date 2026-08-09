@@ -13,6 +13,8 @@ import (
 	"go.uber.org/zap"
 
 	"xoberon-server/internal/adapter/http/middleware"
+	"xoberon-server/internal/domain/entity"
+	"xoberon-server/internal/domain/errs"
 	"xoberon-server/internal/infra/auth"
 	"xoberon-server/internal/infra/config"
 	"xoberon-server/internal/mocks"
@@ -125,6 +127,52 @@ func TestAuth_BlacklistError(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, 503, w.Code)
+}
+
+func TestAuth_UsesCurrentDatabaseRole(t *testing.T) {
+	jwtMgr := newTestJWT()
+	bl := new(mocks.MockTokenBlacklist)
+	users := new(mocks.MockUserRepository)
+	bl.On("IsRevoked", mock.Anything, mock.Anything).Return(false, nil)
+
+	userID := uuid.New()
+	now := time.Now()
+	user := entity.ReconstructUser(userID, "testuser", "test@example.com", "hash", "Test", "@test", "", "", "user", now, now)
+	users.On("FindByID", mock.Anything, userID).Return(user, nil)
+	token, _ := jwtMgr.GenerateAccessToken(userID, "testuser", "admin")
+
+	r := gin.New()
+	r.GET("/test", middleware.Auth(jwtMgr, bl, zap.NewNop(), users), middleware.RequireAdmin(), func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"ok": true})
+	})
+	req, _ := http.NewRequest(http.MethodGet, "/test", nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusForbidden, w.Code)
+}
+
+func TestAuth_DeletedUserFailsClosed(t *testing.T) {
+	jwtMgr := newTestJWT()
+	bl := new(mocks.MockTokenBlacklist)
+	users := new(mocks.MockUserRepository)
+	bl.On("IsRevoked", mock.Anything, mock.Anything).Return(false, nil)
+
+	userID := uuid.New()
+	users.On("FindByID", mock.Anything, userID).Return(nil, errs.NotFound("用户不存在"))
+	token, _ := jwtMgr.GenerateAccessToken(userID, "deleted", "admin")
+
+	r := gin.New()
+	r.GET("/test", middleware.Auth(jwtMgr, bl, zap.NewNop(), users), func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"ok": true})
+	})
+	req, _ := http.NewRequest(http.MethodGet, "/test", nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
 }
 
 func TestOptionalAuth_WithToken(t *testing.T) {

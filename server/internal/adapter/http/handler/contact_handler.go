@@ -13,9 +13,9 @@ import (
 )
 
 type ContactHandler struct {
-	submitContact    *command.SubmitContactHandler
-	listContacts     *query.ListContactsHandler
-	markContactRead  *command.MarkContactReadHandler
+	submitContact   *command.SubmitContactHandler
+	listContacts    *query.ListContactsHandler
+	markContactRead *command.MarkContactReadHandler
 }
 
 func NewContactHandler(
@@ -38,7 +38,7 @@ func (h *ContactHandler) Submit(c *gin.Context) {
 	}
 
 	if req.Honeypot != "" {
-		c.JSON(http.StatusCreated, dto.MessageResp{Message: "ćśćŻĺˇ˛ĺé"})
+		c.JSON(http.StatusCreated, dto.MessageResp{Message: "消息已发送"})
 		return
 	}
 
@@ -51,7 +51,7 @@ func (h *ContactHandler) Submit(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, dto.MessageResp{Message: "ćśćŻĺˇ˛ĺé"})
+	c.JSON(http.StatusCreated, dto.MessageResp{Message: "消息已发送"})
 }
 
 // ---- Admin ----
@@ -100,7 +100,7 @@ func (h *ContactHandler) List(c *gin.Context) {
 func (h *ContactHandler) MarkRead(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "ć ćçćśćŻ ID"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "无效的消息 ID"})
 		return
 	}
 
@@ -111,5 +111,5 @@ func (h *ContactHandler) MarkRead(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.MessageResp{Message: "ĺˇ˛ć čŽ°ä¸şĺˇ˛čŻť"})
+	c.JSON(http.StatusOK, dto.MessageResp{Message: "已标记为已读"})
 }

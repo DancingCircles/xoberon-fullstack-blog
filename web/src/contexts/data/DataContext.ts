@@ -19,13 +19,21 @@ export interface DataContextType {
   essays: EssayItem[]
   isLoading: boolean
   error: string | null
+  postTotal: number
+  essayTotal: number
+  hasMorePosts: boolean
+  hasMoreEssays: boolean
   addPost: (input: AddPostInput) => Promise<BlogPost>
+  updatePost: (id: string, input: AddPostInput) => Promise<BlogPost>
   addEssay: (input: AddEssayInput) => Promise<EssayItem>
+  updateEssay: (id: string, input: AddEssayInput) => Promise<EssayItem>
   addComment: (postId: string, content: string) => Promise<Comment>
   removePost: (postId: string) => void
   removeEssay: (essayId: string) => void
   refreshPosts: () => Promise<void>
   refreshEssays: () => Promise<void>
+  loadMorePosts: () => Promise<void>
+  loadMoreEssays: () => Promise<void>
 }
 
 export const DataContext = createContext<DataContextType | undefined>(undefined)

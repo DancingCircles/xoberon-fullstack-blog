@@ -9,27 +9,12 @@ import {
   registerApi,
   logoutApi,
   updateProfileApi,
+  fetchCurrentUser,
 } from '../../services/runtime'
 import type { UserProfile } from '../../assets/data/types'
 import { resolveAvatarSrc } from '../../utils/avatar'
 
 const USER_STORAGE_KEY = 'xoberon-user'
-
-function loadStoredUser(): UserProfile | null {
-  try {
-    const token = getAuthToken()
-    if (!token) return null
-    const raw = localStorage.getItem(USER_STORAGE_KEY)
-    if (raw) {
-      const user = JSON.parse(raw) as UserProfile
-      return {
-        ...user,
-        avatar: resolveAvatarSrc(user.avatar, user.handle || user.id || user.name),
-      }
-    }
-  } catch { /* ignore */ }
-  return null
-}
 
 function saveUser(user: UserProfile) {
   localStorage.setItem(USER_STORAGE_KEY, JSON.stringify({
@@ -48,14 +33,18 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(loadStoredUser)
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isChecking, setIsChecking] = useState(true)
 
   const navigate = useNavigate()
   const location = useLocation()
   const { toast } = useToast()
 
   const isAuthenticated = currentUser !== null
+  const authStatus: 'checking' | 'authenticated' | 'anonymous' = isChecking
+    ? 'checking'
+    : isAuthenticated ? 'authenticated' : 'anonymous'
   const isOwner = currentUser?.role === 'owner'
   const isAdmin = currentUser?.role === 'admin' || isOwner
 
@@ -69,14 +58,43 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => window.removeEventListener('auth:unauthorized', handleUnauthorized)
   }, [])
 
+  useEffect(() => {
+    let cancelled = false
+    async function bootstrap() {
+      if (!getAuthToken()) {
+        clearStoredUser()
+        if (!cancelled) setIsChecking(false)
+        return
+      }
+      try {
+        const user = await fetchCurrentUser()
+        if (!cancelled) {
+          setCurrentUser(user)
+          saveUser(user)
+        }
+      } catch {
+        clearAuthToken()
+        clearStoredUser()
+        if (!cancelled) setCurrentUser(null)
+      } finally {
+        if (!cancelled) setIsChecking(false)
+      }
+    }
+    void bootstrap()
+    return () => { cancelled = true }
+  }, [])
+
   const login = useCallback(async (username: string, password: string): Promise<AuthActionResult> => {
     setIsLoading(true)
     try {
-      const { user } = await loginApi(username, password)
+      await loginApi(username, password)
+      const user = await fetchCurrentUser()
       setCurrentUser(user)
       saveUser(user)
       return { ok: true }
     } catch (err) {
+      clearAuthToken()
+      clearStoredUser()
       return { ok: false, message: friendlyErrorMessage(err, '用户名或密码错误') }
     } finally {
       setIsLoading(false)
@@ -86,11 +104,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const register = useCallback(async (username: string, email: string, password: string, captchaId: string, captchaCode: string): Promise<AuthActionResult> => {
     setIsLoading(true)
     try {
-      const { user } = await registerApi(username, email, password, username, captchaId, captchaCode)
+      await registerApi(username, email, password, username, captchaId, captchaCode)
+      const user = await fetchCurrentUser()
       setCurrentUser(user)
       saveUser(user)
       return { ok: true }
     } catch (err) {
+      clearAuthToken()
+      clearStoredUser()
       return { ok: false, message: friendlyErrorMessage(err, '注册失败，请检查输入后重试') }
     } finally {
       setIsLoading(false)
@@ -110,17 +131,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const updateProfile = useCallback(async (updates: Partial<Pick<UserProfile, 'name' | 'bio' | 'avatar'>>) => {
     if (!currentUser) return
-    try {
-      const updated = await updateProfileApi({
-        name: updates.name ?? currentUser.name,
-        bio: updates.bio,
-        avatar: updates.avatar,
-      })
-      setCurrentUser(updated)
-      saveUser(updated)
-    } catch {
-      throw new Error('更新资料失败')
-    }
+    const updated = await updateProfileApi({
+      name: updates.name ?? currentUser.name,
+      bio: updates.bio,
+      avatar: updates.avatar,
+    })
+    setCurrentUser(updated)
+    saveUser(updated)
   }, [currentUser])
 
   const requireAuth = useCallback((): boolean => {
@@ -136,6 +153,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     currentUser,
     isAuthenticated,
     isLoading,
+    isChecking,
+    authStatus,
     isAdmin,
     isOwner,
     login,
@@ -143,7 +162,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     logout,
     updateProfile,
     requireAuth,
-  }), [currentUser, isAuthenticated, isLoading, isAdmin, isOwner, login, register, logout, updateProfile, requireAuth])
+  }), [currentUser, isAuthenticated, isLoading, isChecking, authStatus, isAdmin, isOwner, login, register, logout, updateProfile, requireAuth])
 
   return (
     <AuthContext.Provider value={value}>

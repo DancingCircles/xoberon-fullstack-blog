@@ -2,12 +2,15 @@ package handler
 
 import (
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
 	"xoberon-server/internal/adapter/http/dto"
 	"xoberon-server/internal/adapter/http/middleware"
+	"xoberon-server/internal/domain/repository"
 	"xoberon-server/internal/usecase/command"
 	"xoberon-server/internal/usecase/query"
 	"xoberon-server/pkg/pagination"
@@ -20,6 +23,7 @@ type UserHandler struct {
 	updateUserRole *command.UpdateUserRoleHandler
 	updateProfile  *command.UpdateProfileHandler
 	changePassword *command.ChangePasswordHandler
+	likes          repository.LikeRepository
 }
 
 func NewUserHandler(
@@ -29,7 +33,12 @@ func NewUserHandler(
 	updateUserRole *command.UpdateUserRoleHandler,
 	updateProfile *command.UpdateProfileHandler,
 	changePassword *command.ChangePasswordHandler,
+	likes ...repository.LikeRepository,
 ) *UserHandler {
+	var likeRepo repository.LikeRepository
+	if len(likes) > 0 {
+		likeRepo = likes[0]
+	}
 	return &UserHandler{
 		getProfile:     getProfile,
 		listUsers:      listUsers,
@@ -37,7 +46,49 @@ func NewUserHandler(
 		updateUserRole: updateUserRole,
 		updateProfile:  updateProfile,
 		changePassword: changePassword,
+		likes:          likeRepo,
 	}
+}
+
+func (h *UserHandler) GetMe(c *gin.Context) {
+	result, err := h.getProfile.HandleByID(c.Request.Context(), middleware.GetUserID(c))
+	if err != nil {
+		mapError(c, err)
+		return
+	}
+	u := result.User
+	c.JSON(http.StatusOK, dto.CurrentUserResp{
+		ID: u.ID().String(), Name: u.Name(), Handle: u.Handle(), Bio: u.Bio(), Avatar: u.Avatar(),
+		Role: u.Role().String(), Email: u.Email().String(), PostCount: result.PostCount,
+		EssayCount: result.EssayCount, CreatedAt: u.CreatedAt(),
+	})
+}
+
+func (h *UserHandler) GetMyLikes(c *gin.Context) {
+	if h.likes == nil {
+		c.JSON(http.StatusServiceUnavailable, dto.ErrorResp{Error: "SERVICE_UNAVAILABLE", Message: "点赞服务暂时不可用"})
+		return
+	}
+	ctx := c.Request.Context()
+	userID := middleware.GetUserID(c)
+	postIDs, err := h.likes.ListByUser(ctx, userID, repository.TargetPost)
+	if err != nil {
+		mapError(c, err)
+		return
+	}
+	essayIDs, err := h.likes.ListByUser(ctx, userID, repository.TargetEssay)
+	if err != nil {
+		mapError(c, err)
+		return
+	}
+	resp := dto.UserLikesResp{PostIDs: make([]string, len(postIDs)), EssayIDs: make([]string, len(essayIDs))}
+	for i, id := range postIDs {
+		resp.PostIDs[i] = id.String()
+	}
+	for i, id := range essayIDs {
+		resp.EssayIDs[i] = id.String()
+	}
+	c.JSON(http.StatusOK, resp)
 }
 
 // GetProfile returns a user's public profile.
@@ -86,6 +137,13 @@ func (h *UserHandler) UpdateMe(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: translateBindingError(err)})
 		return
+	}
+	if req.Avatar != "" {
+		parsed, err := url.Parse(req.Avatar)
+		if err != nil || !strings.EqualFold(parsed.Scheme, "https") || parsed.Host == "" {
+			c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "头像地址必须是有效的 HTTPS URL"})
+			return
+		}
 	}
 
 	userID := middleware.GetUserID(c)

@@ -49,6 +49,7 @@ func TestCommentList_Success(t *testing.T) {
 		uuid.New(), postID, uuid.New(), "Great post!", "X", "", "published", now,
 	)
 	commentRepo.On("ListByPost", mock.Anything, postID, 1, 10).Return([]*entity.Comment{comment}, nil)
+	commentRepo.On("CountByPost", mock.Anything, postID).Return(int64(1), nil)
 
 	r := setupRouter()
 	r.GET("/api/v1/posts/:id/comments", h.ListByPost)
@@ -56,10 +57,14 @@ func TestCommentList_Success(t *testing.T) {
 	w := performRequest(r, http.MethodGet, "/api/v1/posts/"+postID.String()+"/comments", nil)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	var resp []map[string]interface{}
+	var resp struct {
+		Items []map[string]interface{} `json:"items"`
+		Total int64                    `json:"total"`
+	}
 	parseJSON(w, &resp)
-	assert.Len(t, resp, 1)
-	assert.Equal(t, "Great post!", resp[0]["content"])
+	assert.Len(t, resp.Items, 1)
+	assert.Equal(t, int64(1), resp.Total)
+	assert.Equal(t, "Great post!", resp.Items[0]["content"])
 }
 
 func TestCommentCreate_Success(t *testing.T) {

@@ -16,7 +16,7 @@ const CARDS_PER_ROW = 6
 const MAX_ROWS = 3
 
 export default function AboutPage() {
-  const { essays } = useData()
+  const { essays, hasMoreEssays, loadMoreEssays } = useData()
   const containerRef = useRef<HTMLDivElement>(null)
   const [selectedEssay, setSelectedEssay] = useState<EssayItem | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -204,6 +204,7 @@ export default function AboutPage() {
             </button>
           </div>
         )}
+        {hasMoreEssays && <button className="xo-btn-secondary" onClick={() => void loadMoreEssays()}>加载更多随笔</button>}
       </div>
 
       <Footer />

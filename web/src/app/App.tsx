@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 import gsap from 'gsap'
@@ -39,30 +38,11 @@ function HeartbeatReporter() {
 }
 
 export default function App() {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
-        e.preventDefault()
-      }
-    }
-    const handleWheel = (e: WheelEvent) => {
-      if (e.ctrlKey || e.metaKey) {
-        e.preventDefault()
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    document.addEventListener('wheel', handleWheel, { passive: false })
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.removeEventListener('wheel', handleWheel)
-    }
-  }, [])
-
   return (
-    <LikesProvider>
     <ToastProvider>
       <BrowserRouter>
         <AuthProvider>
+        <LikesProvider>
         <DataProvider>
         <HeartbeatReporter />
         <Routes>
@@ -91,7 +71,7 @@ export default function App() {
                 <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/journal" element={<BlogPage />} />
-                <Route path="/create-post" element={<CreatePostPage />} />
+                <Route path="/create-post" element={<ProtectedRoute><CreatePostPage /></ProtectedRoute>} />
                 <Route path="/search" element={<WorksPage />} />
                 <Route path="/search/results" element={<ProtectedRoute><SearchResultsPage /></ProtectedRoute>} />
                 <Route path="/notes" element={<AboutPage />} />
@@ -105,9 +85,9 @@ export default function App() {
           } />
         </Routes>
         </DataProvider>
+        </LikesProvider>
         </AuthProvider>
       </BrowserRouter>
     </ToastProvider>
-    </LikesProvider>
   )
 }

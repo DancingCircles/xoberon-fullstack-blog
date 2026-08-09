@@ -1,19 +1,37 @@
 import { screen } from '@testing-library/react'
+import { Route, Routes } from 'react-router-dom'
 import { renderWithProviders } from '../../../../test/test-utils'
 import ProtectedRoute from '../ProtectedRoute'
 
 describe('ProtectedRoute', () => {
+  const routedSubject = (
+    <Routes>
+      <Route path="/create-post" element={<ProtectedRoute><p>Protected</p></ProtectedRoute>} />
+      <Route path="/login" element={<p>Login</p>} />
+    </Routes>
+  )
+
+  it('shows a loading state while authentication is being checked', () => {
+    renderWithProviders(
+      routedSubject,
+      { auth: { isChecking: true, isAuthenticated: false }, routerProps: { initialEntries: ['/create-post'] } }
+    )
+    expect(screen.getByRole('status')).toBeInTheDocument()
+    expect(screen.queryByText('Protected')).not.toBeInTheDocument()
+  })
+
   it('未登录时重定向', () => {
     renderWithProviders(
-      <ProtectedRoute><p>Protected</p></ProtectedRoute>,
+      routedSubject,
       { auth: { isAuthenticated: false }, routerProps: { initialEntries: ['/create-post'] } }
     )
     expect(screen.queryByText('Protected')).not.toBeInTheDocument()
+    expect(screen.getByText('Login')).toBeInTheDocument()
   })
 
   it('已登录时展示内容', () => {
     renderWithProviders(
-      <ProtectedRoute><p>Protected</p></ProtectedRoute>,
+      routedSubject,
       {
         auth: {
           isAuthenticated: true,

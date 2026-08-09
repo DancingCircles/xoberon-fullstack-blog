@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState, useLayoutEffect } from 'react'
-import { useAuth } from '../../hooks/auth/useAuth'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lottie, { type LottieRefCurrentProps } from 'lottie-react'
@@ -72,12 +71,9 @@ export default function ContactPage() {
     })
   }, [])
 
-  const { requireAuth } = useAuth()
-
   const handleOpenModal = useCallback(() => {
-    if (!requireAuth()) return
     setIsModalOpen(true)
-  }, [requireAuth])
+  }, [])
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false)

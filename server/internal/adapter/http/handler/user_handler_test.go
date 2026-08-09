@@ -81,6 +81,34 @@ func TestUserGetProfile_NotFound(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, w.Code)
 }
 
+func TestUserGetMe_ReturnsPrivateProfile(t *testing.T) {
+	userRepo, postRepo, essayRepo, h := newUserTestDeps()
+
+	now := time.Now()
+	userID := uuid.New()
+	user := entity.ReconstructUser(
+		userID, "testuser", "private@example.com",
+		"$2a$12$LJ3m4ys3Bz4IihWyXDw2xeqH7VlBsJEv8JsdO7YYu5FJdNJuGHpai",
+		"Private User", "@private", "bio", "https://example.com/avatar.png", "admin", now, now,
+	)
+	userRepo.On("FindByID", mock.Anything, userID).Return(user, nil)
+	postRepo.On("List", mock.Anything, mock.Anything, 1, 1).Return([]*entity.Post(nil), int64(2), nil)
+	essayRepo.On("List", mock.Anything, mock.Anything, 1, 1).Return([]*entity.Essay(nil), int64(4), nil)
+
+	r := setupRouter()
+	r.GET("/api/v1/users/me", authMiddleware(userID, "testuser", "admin"), h.GetMe)
+	w := performAuthRequest(r, http.MethodGet, "/api/v1/users/me", nil, "dummy-token")
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	var resp map[string]interface{}
+	parseJSON(w, &resp)
+	assert.Equal(t, userID.String(), resp["id"])
+	assert.Equal(t, "private@example.com", resp["email"])
+	assert.Equal(t, "admin", resp["role"])
+	assert.Equal(t, float64(2), resp["post_count"])
+	assert.Equal(t, float64(4), resp["essay_count"])
+}
+
 func TestUserSearch_Success(t *testing.T) {
 	userRepo, _, _, h := newUserTestDeps()
 
@@ -124,8 +152,8 @@ func TestUserUpdateMe_Success(t *testing.T) {
 	r.PUT("/api/v1/users/me", authMiddleware(userID, "testuser", "user"), h.UpdateMe)
 
 	body := map[string]interface{}{
-		"name":  "Updated Name",
-		"bio":   "New bio",
+		"name":   "Updated Name",
+		"bio":    "New bio",
 		"avatar": "https://example.com/avatar.png",
 	}
 	w := performAuthRequest(r, http.MethodPut, "/api/v1/users/me", body, "dummy-token")
@@ -185,7 +213,7 @@ func TestUserAdminListUsers_Success(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 	var resp struct {
 		Items []map[string]interface{} `json:"items"`
-		Total int64                     `json:"total"`
+		Total int64                    `json:"total"`
 	}
 	parseJSON(w, &resp)
 	assert.Equal(t, int64(1), resp.Total)

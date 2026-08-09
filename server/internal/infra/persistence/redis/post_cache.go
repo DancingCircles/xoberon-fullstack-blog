@@ -20,10 +20,10 @@ var NullMarker = []byte("null")
 
 // PostCache 文章缓存（存储序列化后的 JSON，避免缓存层依赖 domain 实体）
 type PostCache struct {
-	rdb            *redis.Client
-	listTTL        time.Duration
-	detailTTL      time.Duration
-	nullMarkerTTL  time.Duration
+	rdb           *redis.Client
+	listTTL       time.Duration
+	detailTTL     time.Duration
+	nullMarkerTTL time.Duration
 }
 
 func NewPostCache(rdb *redis.Client) *PostCache {

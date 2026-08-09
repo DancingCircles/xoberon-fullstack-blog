@@ -1,6 +1,7 @@
 import { render, type RenderOptions } from '@testing-library/react'
 import { MemoryRouter, type MemoryRouterProps } from 'react-router-dom'
 import { LikesProvider } from '../contexts/likes/LikesProvider'
+import { LikesContext, type LikesContextType } from '../contexts/likes/LikesContext'
 import { ToastContext } from '../contexts/toast/ToastContext'
 import { AuthContext, type AuthContextType } from '../contexts/auth/AuthContext'
 import { DataContext, type DataContextType } from '../contexts/data/DataContext'
@@ -22,6 +23,8 @@ const defaultAuth: AuthContextType = {
   currentUser: null,
   isAuthenticated: false,
   isLoading: false,
+  isChecking: false,
+  authStatus: 'anonymous',
   isAdmin: false,
   isOwner: false,
   login: vi.fn(() => Promise.resolve({ ok: false, message: '未实现' })),
@@ -36,13 +39,21 @@ const defaultData: DataContextType = {
   essays: [],
   isLoading: false,
   error: null,
+  postTotal: 0,
+  essayTotal: 0,
+  hasMorePosts: false,
+  hasMoreEssays: false,
   addPost: vi.fn() as unknown as DataContextType['addPost'],
+  updatePost: vi.fn() as unknown as DataContextType['updatePost'],
   addEssay: vi.fn() as unknown as DataContextType['addEssay'],
+  updateEssay: vi.fn() as unknown as DataContextType['updateEssay'],
   addComment: vi.fn() as unknown as DataContextType['addComment'],
   removePost: vi.fn(),
   removeEssay: vi.fn(),
   refreshPosts: vi.fn() as unknown as DataContextType['refreshPosts'],
   refreshEssays: vi.fn() as unknown as DataContextType['refreshEssays'],
+  loadMorePosts: vi.fn() as unknown as DataContextType['loadMorePosts'],
+  loadMoreEssays: vi.fn() as unknown as DataContextType['loadMoreEssays'],
 }
 
 interface WrapperOptions {
@@ -57,21 +68,37 @@ function createWrapper(opts: WrapperOptions = {}) {
   const auth = { ...defaultAuth, ...opts.auth }
   const data = { ...defaultData, ...opts.data }
   const routerProps = opts.routerProps ?? { initialEntries: ['/'] }
+  const likes: LikesContextType = {
+    likedPostIds: new Set(),
+    likedEssayIds: new Set(),
+    togglePostLike: vi.fn(() => Promise.resolve()),
+    toggleEssayLike: vi.fn(() => Promise.resolve()),
+    isPostLiked: () => false,
+    isEssayLiked: () => false,
+    postLikeCount: (_id, fallback) => fallback,
+    essayLikeCount: (_id, fallback) => fallback,
+    isPostPending: () => false,
+    isEssayPending: () => false,
+  }
 
   function Wrapper({ children }: { children: ReactNode }) {
     return (
       <LenisContext.Provider value={{ lenis: null }}>
-        <LikesProvider>
-          <ToastContext.Provider value={{ toast: mockToast }}>
-            <MemoryRouter {...routerProps}>
-              <AuthContext.Provider value={auth}>
+        <ToastContext.Provider value={{ toast: mockToast }}>
+          <MemoryRouter {...routerProps}>
+            <AuthContext.Provider value={auth}>
+              {opts.withLikes ? <LikesProvider>
                 <DataContext.Provider value={data}>
                   {children}
                 </DataContext.Provider>
-              </AuthContext.Provider>
-            </MemoryRouter>
-          </ToastContext.Provider>
-        </LikesProvider>
+              </LikesProvider> : <LikesContext.Provider value={likes}>
+                <DataContext.Provider value={data}>
+                  {children}
+                </DataContext.Provider>
+              </LikesContext.Provider>}
+            </AuthContext.Provider>
+          </MemoryRouter>
+        </ToastContext.Provider>
       </LenisContext.Provider>
     )
   }

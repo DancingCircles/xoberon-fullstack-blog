@@ -17,7 +17,6 @@ export default function CreatePostPage() {
   const [formData, setFormData] = useState({
     title: '',
     category: '',
-    excerpt: '',
     content: '',
     tags: ''
   })
@@ -114,19 +113,6 @@ export default function CreatePostPage() {
                     maxLength={60}
                   />
                 </div>
-              </div>
-
-              <div className="input-group">
-                <label>EXCERPT</label>
-                <textarea 
-                  name="excerpt" 
-                  value={formData.excerpt} 
-                  onChange={handleInputChange} 
-                  rows={3} 
-                  placeholder="Brief summary"
-                  maxLength={150}
-                  required
-                />
               </div>
 
               <div className="input-group content-editor">

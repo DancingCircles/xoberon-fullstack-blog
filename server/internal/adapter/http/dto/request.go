@@ -56,9 +56,9 @@ type CreateCommentReq struct {
 // ---- Contact ----
 
 type ContactReq struct {
-	Name     string `json:"name" binding:"required,max=100"`
-	Email    string `json:"email" binding:"required,email"`
-	Message  string `json:"message" binding:"required,max=5000"`
+	Name    string `json:"name" binding:"required,max=100"`
+	Email   string `json:"email" binding:"required,email"`
+	Message string `json:"message" binding:"required,max=5000"`
 	// Honeypot 蜜罐字段：前端隐藏，人类不会填写。非空则视为机器人提交。
 	Honeypot string `json:"website" binding:""`
 }

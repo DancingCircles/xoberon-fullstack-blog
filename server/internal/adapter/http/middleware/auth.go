@@ -9,6 +9,8 @@ import (
 	"go.uber.org/zap"
 
 	"xoberon-server/internal/adapter/http/dto"
+	"xoberon-server/internal/domain/errs"
+	"xoberon-server/internal/domain/repository"
 	"xoberon-server/internal/infra/auth"
 )
 
@@ -21,7 +23,7 @@ const (
 )
 
 // Auth JWT 鉴权中间件（含黑名单检查，fail-closed 策略）
-func Auth(jwtMgr *auth.JWTManager, blacklist auth.TokenBlacklist, log *zap.Logger) gin.HandlerFunc {
+func Auth(jwtMgr *auth.JWTManager, blacklist auth.TokenBlacklist, log *zap.Logger, userRepos ...repository.UserRepository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		header := c.GetHeader("Authorization")
 		if header == "" {
@@ -70,9 +72,26 @@ func Auth(jwtMgr *auth.JWTManager, blacklist auth.TokenBlacklist, log *zap.Logge
 			}
 		}
 
+		username := claims.Username
+		role := claims.Role
+		if len(userRepos) > 0 && userRepos[0] != nil {
+			user, err := userRepos[0].FindByID(c.Request.Context(), claims.UserID)
+			if err != nil {
+				if errs.IsNotFound(err) {
+					c.AbortWithStatusJSON(http.StatusUnauthorized, dto.ErrorResp{Error: "UNAUTHORIZED", Message: "用户不存在或已失效"})
+				} else {
+					log.Warn("加载当前用户失败，拒绝请求（fail-closed）", zap.Error(err), zap.String("user_id", claims.UserID.String()))
+					c.AbortWithStatusJSON(http.StatusServiceUnavailable, dto.ErrorResp{Error: "SERVICE_UNAVAILABLE", Message: "服务暂时不可用，请稍后重试"})
+				}
+				return
+			}
+			username = user.Username()
+			role = user.Role().String()
+		}
+
 		c.Set(ContextKeyUserID, claims.UserID)
-		c.Set(ContextKeyUsername, claims.Username)
-		c.Set(ContextKeyRole, claims.Role)
+		c.Set(ContextKeyUsername, username)
+		c.Set(ContextKeyRole, role)
 		c.Set(ContextKeyJTI, claims.ID)
 		if claims.ExpiresAt != nil {
 			c.Set(ContextKeyTokenExp, claims.ExpiresAt.Time)

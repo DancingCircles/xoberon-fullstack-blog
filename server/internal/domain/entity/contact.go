@@ -8,8 +8,8 @@ import (
 	"github.com/google/uuid"
 
 	"xoberon-server/internal/domain/errs"
-	"xoberon-server/pkg/idgen"
 	"xoberon-server/internal/domain/valueobject"
+	"xoberon-server/pkg/idgen"
 	"xoberon-server/pkg/sanitize"
 )
 
@@ -71,7 +71,7 @@ func (c *Contact) MarkRead() {
 	c.isRead = true
 }
 
-func (c *Contact) ID() uuid.UUID           { return c.id }
+func (c *Contact) ID() uuid.UUID            { return c.id }
 func (c *Contact) Name() string             { return c.name }
 func (c *Contact) Email() valueobject.Email { return c.email }
 func (c *Contact) Message() string          { return c.message }

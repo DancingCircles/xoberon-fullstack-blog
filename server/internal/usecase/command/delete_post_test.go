@@ -17,7 +17,6 @@ import (
 	"xoberon-server/internal/usecase/command"
 )
 
-
 func TestDeletePost_Success(t *testing.T) {
 	postRepo := new(mocks.MockPostRepository)
 	cache := new(mocks.MockPostCache)

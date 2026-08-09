@@ -223,6 +223,15 @@ export async function registerApi(
   return { token: result.token, user: toUser(result.user) }
 }
 
+export async function fetchCurrentUser(): Promise<UserProfile> {
+  return toUser(await api.get<UserDto>('/v1/users/me'))
+}
+
+export async function fetchMyLikes(): Promise<{ postIds: string[]; essayIds: string[] }> {
+  const result = await api.get<{ post_ids: string[]; essay_ids: string[] }>('/v1/users/me/likes')
+  return { postIds: result.post_ids ?? [], essayIds: result.essay_ids ?? [] }
+}
+
 export async function logoutApi(): Promise<void> {
   try {
     await api.post<void>('/v1/auth/logout', {})
@@ -234,7 +243,8 @@ export async function logoutApi(): Promise<void> {
 export async function updateProfileApi(
   data: { name: string; bio?: string; avatar?: string },
 ): Promise<UserProfile> {
-  return toUser(await api.put<UserDto>('/v1/users/me', data))
+  await api.put<UserDto>('/v1/users/me', data)
+  return fetchCurrentUser()
 }
 
 export async function changePasswordApi(oldPassword: string, newPassword: string): Promise<void> {
@@ -253,6 +263,7 @@ export async function fetchPosts(
     category: params?.category,
     tag: params?.tag,
     keyword: params?.keyword,
+    author_id: params?.authorId,
   })}`)
   return { items: result.items.map(toPost), total: result.total }
 }
@@ -266,6 +277,15 @@ export async function createPost(data: {
   return toPost(await api.post<PostDto>('/v1/posts', data))
 }
 
+export async function updatePost(id: string, data: {
+  title: string
+  content: string
+  category: BlogPost['category']
+  tags: string[]
+}): Promise<BlogPost> {
+  return toPost(await api.put<PostDto>(`/v1/posts/${encodeURIComponent(id)}`, data))
+}
+
 export async function deletePost(id: string): Promise<void> {
   await api.delete<void>(`/v1/posts/${encodeURIComponent(id)}`)
 }
@@ -277,8 +297,9 @@ export async function togglePostLike(
   return { liked: result.liked, likeCount: result.like_count }
 }
 
-export async function fetchComments(postId: string): Promise<Comment[]> {
-  return (await api.get<CommentDto[]>(`/v1/posts/${encodeURIComponent(postId)}/comments`)).map(toComment)
+export async function fetchComments(postId: string, params?: { page?: number; pageSize?: number }): Promise<{ items: Comment[]; total: number }> {
+  const result = await api.get<PageResult<CommentDto>>(`/v1/posts/${encodeURIComponent(postId)}/comments${buildQuery({ page: params?.page, page_size: params?.pageSize })}`)
+  return { items: result.items.map(toComment), total: result.total }
 }
 
 export async function createComment(postId: string, content: string): Promise<Comment> {
@@ -313,6 +334,7 @@ export async function fetchEssays(
     page: params?.page,
     page_size: params?.pageSize,
     keyword: params?.keyword,
+    author_id: params?.authorId,
   })}`)
   return { items: result.items.map(toEssay), total: result.total }
 }
@@ -323,6 +345,14 @@ export async function createEssay(data: {
   content: string
 }): Promise<EssayItem> {
   return toEssay(await api.post<EssayDto>('/v1/essays', data))
+}
+
+export async function updateEssay(id: string, data: {
+  title: string
+  excerpt: string
+  content: string
+}): Promise<EssayItem> {
+  return toEssay(await api.put<EssayDto>(`/v1/essays/${encodeURIComponent(id)}`, data))
 }
 
 export async function deleteEssay(id: string): Promise<void> {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { renderHook, act } from '@testing-library/react'
+import { renderHook, act, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { AuthProvider } from '../auth/AuthProvider'
 import { useAuth } from '../../hooks/auth/useAuth'
@@ -10,6 +10,7 @@ vi.mock('../../services/runtime', () => ({
   loginApi: vi.fn(),
   registerApi: vi.fn(),
   logoutApi: vi.fn(() => Promise.resolve()),
+  fetchCurrentUser: vi.fn(),
   updateProfileApi: vi.fn(),
 }))
 vi.mock('../../services/api', () => ({
@@ -19,7 +20,8 @@ vi.mock('../../services/api', () => ({
   friendlyErrorMessage: vi.fn((_err: unknown, fallback: string) => fallback),
 }))
 
-import { loginApi, registerApi } from '../../services/runtime'
+import { fetchCurrentUser, loginApi, registerApi } from '../../services/runtime'
+import { clearAuthToken } from '../../services/api'
 
 const mockUser = {
   id: 'u1',
@@ -53,6 +55,23 @@ describe('AuthProvider', () => {
   beforeEach(() => {
     localStorage.clear()
     vi.clearAllMocks()
+    vi.mocked(fetchCurrentUser).mockResolvedValue(mockUser)
+  })
+
+  it('bootstraps the authenticated user from /users/me', async () => {
+    const { result } = renderHook(() => useAuth(), { wrapper })
+    expect(result.current.authStatus).toBe('checking')
+    await waitFor(() => expect(result.current.authStatus).toBe('authenticated'))
+    expect(result.current.currentUser).toEqual(mockUser)
+  })
+
+  it('clears the token and snapshot when bootstrap validation fails', async () => {
+    localStorage.setItem('xoberon-user', JSON.stringify(mockUser))
+    vi.mocked(fetchCurrentUser).mockRejectedValueOnce(new Error('expired'))
+    const { result } = renderHook(() => useAuth(), { wrapper })
+    await waitFor(() => expect(result.current.authStatus).toBe('anonymous'))
+    expect(clearAuthToken).toHaveBeenCalled()
+    expect(localStorage.getItem('xoberon-user')).toBeNull()
   })
 
   it('初始状态未登录', () => {

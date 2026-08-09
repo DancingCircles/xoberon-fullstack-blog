@@ -39,7 +39,7 @@ type ServerConfig struct {
 	Mode            string        `mapstructure:"GIN_MODE"`
 	ShutdownTimeout time.Duration `mapstructure:"SERVER_SHUTDOWN_TIMEOUT"`
 	// TrustedProxies 信任的反向代理 IP 列表，防止 ClientIP() 被伪造
-	TrustedProxies  []string
+	TrustedProxies []string
 }
 
 type CORSConfig struct {
@@ -60,12 +60,12 @@ type DBConfig struct {
 }
 
 type RedisConfig struct {
-	Addr            string        `mapstructure:"REDIS_ADDR"`
-	Password        string        `mapstructure:"REDIS_PASSWORD"`
-	DB              int           `mapstructure:"REDIS_DB"`
-	CacheListTTL    time.Duration `mapstructure:"REDIS_CACHE_LIST_TTL"`
-	CacheDetailTTL  time.Duration `mapstructure:"REDIS_CACHE_DETAIL_TTL"`
-	NullMarkerTTL   time.Duration `mapstructure:"REDIS_NULL_MARKER_TTL"`
+	Addr           string        `mapstructure:"REDIS_ADDR"`
+	Password       string        `mapstructure:"REDIS_PASSWORD"`
+	DB             int           `mapstructure:"REDIS_DB"`
+	CacheListTTL   time.Duration `mapstructure:"REDIS_CACHE_LIST_TTL"`
+	CacheDetailTTL time.Duration `mapstructure:"REDIS_CACHE_DETAIL_TTL"`
+	NullMarkerTTL  time.Duration `mapstructure:"REDIS_NULL_MARKER_TTL"`
 }
 
 type JWTConfig struct {

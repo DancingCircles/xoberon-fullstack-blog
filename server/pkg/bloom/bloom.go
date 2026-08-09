@@ -9,19 +9,19 @@ import (
 // SlugFilter wraps a Bloom filter to provide thread-safe
 // probabilistic membership testing for post slugs.
 type SlugFilter struct {
-	mu            sync.RWMutex
-	filter        *bloomfilter.BloomFilter
+	mu             sync.RWMutex
+	filter         *bloomfilter.BloomFilter
 	estimatedItems uint
-	fpRate        float64
+	fpRate         float64
 }
 
 // New creates a SlugFilter with the given capacity and false-positive rate.
 // Typical usage: New(100_000, 0.0001) for 100k items with 0.01% FP rate.
 func New(estimatedItems uint, fpRate float64) *SlugFilter {
 	return &SlugFilter{
-		filter:        bloomfilter.NewWithEstimates(estimatedItems, fpRate),
+		filter:         bloomfilter.NewWithEstimates(estimatedItems, fpRate),
 		estimatedItems: estimatedItems,
-		fpRate:        fpRate,
+		fpRate:         fpRate,
 	}
 }
 

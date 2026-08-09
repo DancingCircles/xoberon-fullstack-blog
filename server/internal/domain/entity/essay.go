@@ -8,8 +8,8 @@ import (
 	"github.com/google/uuid"
 
 	"xoberon-server/internal/domain/errs"
-	"xoberon-server/pkg/idgen"
 	"xoberon-server/internal/domain/valueobject"
+	"xoberon-server/pkg/idgen"
 	"xoberon-server/pkg/sanitize"
 )
 
@@ -132,15 +132,15 @@ func (e *Essay) DecrementLikes() {
 	}
 }
 
-func (e *Essay) ID() uuid.UUID         { return e.id }
-func (e *Essay) AuthorID() uuid.UUID   { return e.authorID }
-func (e *Essay) Title() string         { return e.title }
-func (e *Essay) Excerpt() string       { return e.excerpt }
-func (e *Essay) Content() string       { return e.content }
-func (e *Essay) LikeCount() int        { return e.likeCount }
-func (e *Essay) ReviewStatus() string  { return e.reviewStatus }
-func (e *Essay) AuthorName() string    { return e.authorName }
-func (e *Essay) AuthorAvatar() string  { return e.authorAvatar }
-func (e *Essay) AuthorHandle() string  { return e.authorHandle }
-func (e *Essay) CreatedAt() time.Time  { return e.createdAt }
-func (e *Essay) UpdatedAt() time.Time  { return e.updatedAt }
+func (e *Essay) ID() uuid.UUID        { return e.id }
+func (e *Essay) AuthorID() uuid.UUID  { return e.authorID }
+func (e *Essay) Title() string        { return e.title }
+func (e *Essay) Excerpt() string      { return e.excerpt }
+func (e *Essay) Content() string      { return e.content }
+func (e *Essay) LikeCount() int       { return e.likeCount }
+func (e *Essay) ReviewStatus() string { return e.reviewStatus }
+func (e *Essay) AuthorName() string   { return e.authorName }
+func (e *Essay) AuthorAvatar() string { return e.authorAvatar }
+func (e *Essay) AuthorHandle() string { return e.authorHandle }
+func (e *Essay) CreatedAt() time.Time { return e.createdAt }
+func (e *Essay) UpdatedAt() time.Time { return e.updatedAt }

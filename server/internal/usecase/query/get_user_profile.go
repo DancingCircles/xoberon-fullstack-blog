@@ -35,13 +35,26 @@ func (h *GetUserProfileHandler) Handle(ctx context.Context, handle string) (*Use
 		return nil, err
 	}
 
-	filter := repository.PostFilter{AuthorID: &[]uuid.UUID{user.ID()}[0]}
+	return h.profileForUser(ctx, user)
+}
+
+func (h *GetUserProfileHandler) HandleByID(ctx context.Context, id uuid.UUID) (*UserProfileResult, error) {
+	user, err := h.users.FindByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return h.profileForUser(ctx, user)
+}
+
+func (h *GetUserProfileHandler) profileForUser(ctx context.Context, user *entity.User) (*UserProfileResult, error) {
+	userID := user.ID()
+	filter := repository.PostFilter{AuthorID: &userID}
 	_, postCount, err := h.posts.List(ctx, filter, 1, 1)
 	if err != nil {
 		return nil, err
 	}
 
-	essayFilter := repository.EssayFilter{AuthorID: &[]uuid.UUID{user.ID()}[0]}
+	essayFilter := repository.EssayFilter{AuthorID: &userID}
 	_, essayCount, err := h.essays.List(ctx, essayFilter, 1, 1)
 	if err != nil {
 		return nil, err

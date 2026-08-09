@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import gsap from 'gsap'
 import { useBodyScrollLock } from '../../../hooks/scroll/useBodyScrollLock'
@@ -27,8 +27,14 @@ export default function EssayModal({ essay, isOpen, onClose }: EssayModalProps) 
   const scrollRef = useRef<HTMLDivElement>(null)
   const mouseDownTargetRef = useRef<EventTarget | null>(null)
   const { currentUser } = useAuth()
-  const { removeEssay } = useData()
+  const { removeEssay, updateEssay } = useData()
   const { toast } = useToast()
+  const [savedEssay, setSavedEssay] = useState<EssayItem | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editTitle, setEditTitle] = useState('')
+  const [editExcerpt, setEditExcerpt] = useState('')
+  const [editContent, setEditContent] = useState('')
+  const [isSavingEdit, setIsSavingEdit] = useState(false)
 
   const isOwnEssay = currentUser !== null && essay !== null && essay.author.handle === currentUser.handle
 
@@ -88,6 +94,7 @@ export default function EssayModal({ essay, isOpen, onClose }: EssayModalProps) 
   }, [isOpen, handleClose])
 
   if (!essay) return null
+  const displayedEssay = savedEssay ?? essay
 
   return createPortal(
     <div
@@ -127,15 +134,55 @@ export default function EssayModal({ essay, isOpen, onClose }: EssayModalProps) 
             </div>
           </div>
 
-          <h2 className="essay-modal-title">{essay.title}</h2>
+          <h2 className="essay-modal-title">{displayedEssay.title}</h2>
+
+          {isEditing && (
+            <div className="comment-input-area">
+              <input value={editTitle} maxLength={20} onChange={e => setEditTitle(e.target.value)} placeholder="标题" />
+              <input value={editExcerpt} maxLength={30} onChange={e => setEditExcerpt(e.target.value)} placeholder="摘要（可选）" />
+              <textarea value={editContent} maxLength={500} rows={8} onChange={e => setEditContent(e.target.value)} />
+              <button
+                className="comment-submit-btn"
+                disabled={isSavingEdit}
+                onClick={async () => {
+                  if (!editTitle.trim() || editTitle.trim().length > 20) { toast.info('标题为必填项且不能超过 20 字符'); return }
+                  if (!editContent.trim() || editContent.trim().length > 500) { toast.info('正文为必填项且不能超过 500 字符'); return }
+                  setIsSavingEdit(true)
+                  try {
+                    const updated = await updateEssay(essay.id, { title: editTitle.trim(), excerpt: editExcerpt.trim(), content: editContent.trim() })
+                    setSavedEssay(updated)
+                    setIsEditing(false)
+                    toast.success('随笔已更新')
+                  } catch (err) {
+                    toast.error(friendlyErrorMessage(err, '更新随笔失败'))
+                  } finally { setIsSavingEdit(false) }
+                }}
+              >保存修改</button>
+              <button type="button" onClick={() => setIsEditing(false)}>取消</button>
+            </div>
+          )}
 
           <div className="essay-modal-body">
-            {essay.content.split('\n\n').map((paragraph, i) => (
+            {displayedEssay.content.split('\n\n').map((paragraph, i) => (
               <p key={i}>{paragraph}</p>
             ))}
           </div>
 
         </div>
+
+        {isOwnEssay && (
+          <button
+            className="modal-delete-btn"
+            style={{ right: '4rem' }}
+            type="button"
+            onClick={() => {
+              setEditTitle(displayedEssay.title)
+              setEditExcerpt(displayedEssay.excerpt)
+              setEditContent(displayedEssay.content)
+              setIsEditing(true)
+            }}
+          >编辑</button>
+        )}
 
         {isOwnEssay && (
           <button

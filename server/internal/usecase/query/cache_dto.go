@@ -10,22 +10,22 @@ import (
 
 // CachedPost 缓存专用 DTO，导出字段 + json tag 保证可序列化
 type CachedPost struct {
-	ID              string    `json:"id"`
-	AuthorID        string    `json:"author_id"`
-	Title           string    `json:"title"`
-	Slug            string    `json:"slug"`
-	Excerpt         string    `json:"excerpt"`
-	Content         string    `json:"content"`
-	Category        string    `json:"category"`
-	Tags            []string  `json:"tags"`
-	LikeCount       int       `json:"like_count"`
-	ReadTime        int       `json:"read_time"`
-	ReviewStatus    string    `json:"review_status"`
-	AuthorName      string    `json:"author_name"`
-	AuthorAvatar    string    `json:"author_avatar"`
-	AuthorHandle    string    `json:"author_handle"`
-	CreatedAt       time.Time `json:"created_at"`
-	UpdatedAt       time.Time `json:"updated_at"`
+	ID           string    `json:"id"`
+	AuthorID     string    `json:"author_id"`
+	Title        string    `json:"title"`
+	Slug         string    `json:"slug"`
+	Excerpt      string    `json:"excerpt"`
+	Content      string    `json:"content"`
+	Category     string    `json:"category"`
+	Tags         []string  `json:"tags"`
+	LikeCount    int       `json:"like_count"`
+	ReadTime     int       `json:"read_time"`
+	ReviewStatus string    `json:"review_status"`
+	AuthorName   string    `json:"author_name"`
+	AuthorAvatar string    `json:"author_avatar"`
+	AuthorHandle string    `json:"author_handle"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
 type CachedComment struct {

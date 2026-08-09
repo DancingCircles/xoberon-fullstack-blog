@@ -3,8 +3,8 @@ package postgres
 import (
 	"fmt"
 
-	"github.com/jmoiron/sqlx"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/jmoiron/sqlx"
 
 	"xoberon-server/internal/infra/config"
 )

@@ -47,9 +47,19 @@ func NewEssayHandler(
 
 func (h *EssayHandler) List(c *gin.Context) {
 	p := parsePagination(c)
+	var authorID *uuid.UUID
+	if raw := c.Query("author_id"); raw != "" {
+		id, err := uuid.Parse(raw)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "无效的作者 ID"})
+			return
+		}
+		authorID = &id
+	}
 
 	essays, total, err := h.listEssays.Handle(c.Request.Context(), query.ListEssaysQuery{
 		Keyword:  optionalQuery(c, "keyword"),
+		AuthorID: authorID,
 		Page:     p.Page,
 		PageSize: p.Size,
 	})

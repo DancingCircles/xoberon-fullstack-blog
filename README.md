@@ -1,193 +1,83 @@
 # Motionfolio Fullstack
 
-<p align="center">
-  <a href="#中文"><img alt="中文" src="https://img.shields.io/badge/README-%E4%B8%AD%E6%96%87-111111?style=for-the-badge"></a>
-  <a href="#english"><img alt="English" src="https://img.shields.io/badge/README-English-111111?style=for-the-badge"></a>
-</p>
+Motionfolio 是 React/Vite + Go/Gin + PostgreSQL + Redis 构建的作品集与内容平台，包含注册登录、文章与随笔、评论、点赞、个人资料、联系表单、后台审核和监控。
 
-<p align="center">
-  <a href="https://blog.xoberon.com/home"><img alt="Live Demo" src="https://img.shields.io/badge/Live%20Demo-blog.xoberon.com-0ea5e9?style=flat-square"></a>
-  <img alt="Frontend" src="https://img.shields.io/badge/frontend-React%20%2B%20Vite-61dafb?style=flat-square">
-  <img alt="Backend" src="https://img.shields.io/badge/backend-Go%20%2B%20Gin-00add8?style=flat-square">
-  <img alt="License" src="https://img.shields.io/badge/license-MIT-111111?style=flat-square">
-</p>
+## 路径一：完整 Compose（推荐）
 
-## 中文
-
-Motionfolio Fullstack 是全站版作品集与博客平台：前端使用 React、TypeScript、Vite、GSAP 和 Three.js，后端使用 Go、Gin、PostgreSQL 与 Redis。它保留动效型前端体验，同时提供真实 API、用户认证、内容发布、评论、点赞、联系消息、后台审核与监控配置。
-
-**在线预览**：<https://blog.xoberon.com/home>
-
-### 适合展示
-
-- React/Vite 前端与 Go/Gin API 的完整项目结构
-- PostgreSQL 迁移、Redis 缓存、JWT 认证和内容审核流程
-- 文章、随笔、评论、点赞、联系表单和后台管理工作流
-- 前端支持 `api` 与 `mock` 两种数据模式，便于本地演示
-- Docker Compose、Nginx、Prometheus/Grafana 配置示例
-
-### 目录结构
-
-```text
-motionfolio-fullstack/
-├── web/      # React frontend, defaults to API mode
-└── server/   # Go API, migrations, Docker and monitoring config
-```
-
-### 快速开始
-
-启动后端：
+需要 Docker Desktop / Docker Engine。默认只对本机开放统一入口 `http://127.0.0.1:8080`，PostgreSQL、Redis、Prometheus 和 Grafana 不暴露宿主机端口。
 
 ```bash
-cd server
 cp .env.example .env
-docker compose up -d postgres redis
-go run ./cmd/api
+docker compose up --build
 ```
 
-健康检查：
-
-```text
-http://localhost:8080/api/health
-```
-
-启动前端：
-
-```bash
-cd web
-cp .env.example .env
-npm install
-npm run dev
-```
-
-默认地址：
-
-```text
-Frontend: http://127.0.0.1:5173
-API:      http://localhost:8080/api
-```
-
-### 数据模式
-
-`web/.env.example` 默认连接 Go API：
+该命令会依次等待 PostgreSQL、Redis，通过一次性 `migrate` 服务执行全部迁移；只有迁移成功后 API 才会启动，API 健康后 Nginx 网关才会就绪。前端生产构建固定使用：
 
 ```env
 VITE_DATA_MODE=api
-VITE_API_BASE_URL=http://localhost:8080/api
+VITE_API_BASE_URL=/api
 ```
 
-如果只想临时预览前端，可以改为：
-
-```env
-VITE_DATA_MODE=mock
-```
-
-### 常用命令
+验证：
 
 ```bash
-# frontend
-cd web
-npm run lint
-npm run test:run
-npm run build
-
-# backend
-cd server
-go test ./...
-go run ./cmd/api
-docker compose up -d
+curl http://127.0.0.1:8080/health
+curl http://127.0.0.1:8080/api/health
+docker compose ps
 ```
 
-前端独立展示版：<https://github.com/DancingCircles/motionfolio-web>
+停止服务使用 `docker compose down`；不要添加 `-v`，即可在重启后保留数据库、Redis 和监控数据。需要从宿主机调试基础设施时，可使用开发覆盖：
 
-作者署名：XOBERON
-
-## English
-
-Motionfolio Fullstack is the API-backed edition of the animated portfolio and journal platform. The frontend is built with React, TypeScript, Vite, GSAP, and Three.js; the backend is built with Go, Gin, PostgreSQL, and Redis. It keeps the motion-focused portfolio experience while adding real APIs, authentication, publishing, comments, likes, contact messages, admin review workflows, and monitoring configuration.
-
-**Live demo**: <https://blog.xoberon.com/home>
-
-### Why It Stands Out
-
-- Complete React/Vite frontend and Go/Gin API structure
-- PostgreSQL migrations, Redis caching, JWT auth, and moderation flow
-- Posts, notes, comments, likes, contact messages, and admin workflows
-- Frontend supports both `api` and `mock` data modes for local demos
-- Docker Compose, Nginx, Prometheus, and Grafana configuration examples
-
-### Structure
-
-```text
-motionfolio-fullstack/
-├── web/      # React frontend, defaults to API mode
-└── server/   # Go API, migrations, Docker and monitoring config
+```bash
+docker compose -f compose.yml -f compose.dev.yml up --build
 ```
 
-### Getting Started
+此时 PostgreSQL、Redis、Prometheus、Grafana 分别绑定到 `127.0.0.1:5432`、`6379`、`9090`、`3000`。
 
-Start the backend:
+## 路径二：前后端独立开发
+
+先启动并迁移基础设施：
+
+```bash
+docker compose -f compose.yml -f compose.dev.yml up -d postgres redis
+docker compose run --rm migrate
+```
+
+后端：
 
 ```bash
 cd server
 cp .env.example .env
-docker compose up -d postgres redis
 go run ./cmd/api
 ```
 
-Health check:
-
-```text
-http://localhost:8080/api/health
-```
-
-Start the frontend:
+前端：
 
 ```bash
 cd web
 cp .env.example .env
-npm install
+npm ci
 npm run dev
 ```
 
-Default URLs:
+开发地址为 `http://127.0.0.1:5173`，API 健康检查为 `http://127.0.0.1:8080/api/health`。
 
-```text
-Frontend: http://127.0.0.1:5173
-API:      http://localhost:8080/api
-```
-
-### Data Modes
-
-`web/.env.example` defaults to the Go API:
-
-```env
-VITE_DATA_MODE=api
-VITE_API_BASE_URL=http://localhost:8080/api
-```
-
-For a frontend-only preview:
-
-```env
-VITE_DATA_MODE=mock
-```
-
-### Useful Commands
+## 交付检查
 
 ```bash
-# frontend
 cd web
 npm run lint
+npx tsc --noEmit
 npm run test:run
 npm run build
 
-# backend
-cd server
+cd ../server
+gofmt -l .
+go vet ./...
 go test ./...
-go run ./cmd/api
-docker compose up -d
+go test -race ./...
 ```
 
-Frontend-only edition: <https://github.com/DancingCircles/motionfolio-web>
+鉴权继续使用 Bearer JWT 并存放在 `localStorage`。应用启动时会通过 `/api/v1/users/me` 验证令牌，服务端也会在每个受保护请求中读取数据库当前用户和角色。`localStorage` 中的令牌仍可能被同源 XSS 读取，因此生产环境必须使用严格 CSP、避免不可信脚本，并通过 HTTPS 交付；本版本不包含 refresh token、多设备会话撤销、邮箱验证或找回密码。
 
-Signature: XOBERON
+默认 Compose 提供本地 HTTP。生产 TLS 应由部署环境的外部反向代理或单独覆盖配置负责。

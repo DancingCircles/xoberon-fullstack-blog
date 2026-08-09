@@ -6,8 +6,9 @@ interface AdminRouteProps {
 }
 
 export default function AdminRoute({ children }: AdminRouteProps) {
-  const { isAuthenticated, isAdmin } = useAuth()
+  const { isAuthenticated, isAdmin, isChecking } = useAuth()
 
+  if (isChecking) return <div className="page-loading" role="status">正在验证登录状态…</div>
   if (!isAuthenticated) return <Navigate to="/login" replace />
   if (!isAdmin) return <Navigate to="/home" replace />
 

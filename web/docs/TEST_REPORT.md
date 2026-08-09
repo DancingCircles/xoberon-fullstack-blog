@@ -1,36 +1,18 @@
-# XOBERON 公开版测试说明
+# 前端验证记录
 
-> **测试人员**: X  
-> **测试日期**: 2026-03-22  
-> **测试对象**: 前端公开版（mock/localStorage 运行模式）
+更新时间：2026-08-10
 
-## 说明
+本文件只记录当前工作树实际执行过的命令，不保留历史估算通过率。
 
-当前仓库只保留公开版前端的验证方式：
+| 命令 | 结果 |
+|---|---|
+| `npm ci`（Node 22 Alpine 干净容器） | 通过 |
+| `npm run lint` | 通过 |
+| `npx tsc --noEmit` | 通过 |
+| `npm run build` | 通过，1844 个模块完成生产构建 |
+| `npm run test:run -- --reporter=dot` | 通过，53 个测试文件、278 个测试全部通过 |
+| `docker compose build gateway` | 通过，构建参数固定为 API 模式与同域 `/api` |
 
-- 页面渲染与交互基于 `mockRuntime` 和浏览器 `localStorage`
-- 单元测试、组件测试与 E2E 测试均不依赖私有后端
-- 本文档不记录生产环境、安全策略、私有 API 或运维实现
+单元测试已移除会调用 `process.exit(0)` 的全局 teardown 与外层超时包装，`test:run` 现在直接执行 `vitest run`。修复保护路由测试中的无目标路由重定向循环后，全量测试以真实退出码 `0` 完成。Vitest 使用单 worker fork 隔离，CI 保留整体作业超时，超时或 worker 异常会真实失败。
 
-## 本地验证命令
-
-```bash
-npm install
-npx tsc --noEmit
-npm run lint
-npm run test:run
-npm run test:e2e
-npm run build
-```
-
-## 覆盖范围
-
-- 登录、注册、点赞、评论、联系表单、作者页、搜索页等公开版交互
-- 组件级行为验证与基础可访问性检查
-- 构建、类型检查与静态检查
-
-## 注意事项
-
-- E2E 测试面向公开版前端行为，不镜像私有后端路由
-- 所有演示数据均为本地 mock 数据
-- 若你接入自建后端，请在私有环境中维护自己的测试方案与部署验证流程
+构建存在两个非阻断警告：`lottie-web` 使用 `eval`，以及主 bundle 超过 500 kB。本轮未扩大到性能拆包。

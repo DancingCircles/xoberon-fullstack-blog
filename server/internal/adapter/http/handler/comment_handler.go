@@ -11,6 +11,7 @@ import (
 	"xoberon-server/internal/domain/valueobject"
 	"xoberon-server/internal/usecase/command"
 	"xoberon-server/internal/usecase/query"
+	"xoberon-server/pkg/pagination"
 )
 
 type CommentHandler struct {
@@ -30,12 +31,12 @@ func NewCommentHandler(
 func (h *CommentHandler) ListByPost(c *gin.Context) {
 	postID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "æ— æ•ˆçš„æ–‡ç«  ID"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "无效的文章 ID"})
 		return
 	}
 
 	p := parsePagination(c)
-	comments, err := h.listByPost.Handle(c.Request.Context(), query.ListCommentsByPostQuery{
+	comments, total, err := h.listByPost.Handle(c.Request.Context(), query.ListCommentsByPostQuery{
 		PostID:   postID,
 		Page:     p.Page,
 		PageSize: p.Size,
@@ -50,13 +51,13 @@ func (h *CommentHandler) ListByPost(c *gin.Context) {
 		items = append(items, dto.ToCommentResp(cm))
 	}
 
-	c.JSON(http.StatusOK, items)
+	c.JSON(http.StatusOK, pagination.Result[dto.CommentResp]{Items: items, Total: total, Page: p.Page, PageSize: p.Size})
 }
 
 func (h *CommentHandler) Create(c *gin.Context) {
 	postID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "æ— æ•ˆçš„æ–‡ç«  ID"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResp{Error: "VALIDATION_ERROR", Message: "无效的文章 ID"})
 		return
 	}
 

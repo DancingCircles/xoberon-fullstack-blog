@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
+
 	"golang.org/x/sync/singleflight"
 
 	"xoberon-server/internal/domain/entity"
@@ -18,6 +20,7 @@ type ListPostsQuery struct {
 	Category *string
 	Tag      *string
 	Keyword  *string
+	AuthorID *uuid.UUID
 	Page     int
 	PageSize int
 }
@@ -49,6 +52,9 @@ func (h *ListPostsHandler) buildCacheKey(q ListPostsQuery) string {
 	}
 	if q.Keyword != nil {
 		key += "&kw=" + truncate(*q.Keyword, 100)
+	}
+	if q.AuthorID != nil {
+		key += "&author=" + q.AuthorID.String()
 	}
 	hash := sha256.Sum256([]byte(key))
 	return hex.EncodeToString(hash[:])
@@ -84,6 +90,7 @@ func (h *ListPostsHandler) Handle(ctx context.Context, q ListPostsQuery) ([]*ent
 			Category: q.Category,
 			Tag:      q.Tag,
 			Keyword:  q.Keyword,
+			AuthorID: q.AuthorID,
 		}
 		posts, total, dbErr := h.posts.List(sfCtx, filter, q.Page, q.PageSize)
 		if dbErr != nil {

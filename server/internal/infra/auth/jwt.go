@@ -7,8 +7,8 @@ import (
 	"github.com/google/uuid"
 
 	"xoberon-server/internal/domain/errs"
-	"xoberon-server/pkg/idgen"
 	"xoberon-server/internal/infra/config"
+	"xoberon-server/pkg/idgen"
 )
 
 // Claims JWT 载荷

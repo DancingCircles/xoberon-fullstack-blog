@@ -8,8 +8,8 @@ import (
 	"github.com/google/uuid"
 
 	"xoberon-server/internal/domain/errs"
-	"xoberon-server/pkg/idgen"
 	"xoberon-server/internal/domain/valueobject"
+	"xoberon-server/pkg/idgen"
 	"xoberon-server/pkg/sanitize"
 )
 
@@ -65,11 +65,11 @@ func (c *Comment) CanDelete(userID uuid.UUID, role valueobject.Role) bool {
 	return c.authorID == userID || role.IsAdmin()
 }
 
-func (c *Comment) ID() uuid.UUID         { return c.id }
-func (c *Comment) PostID() uuid.UUID     { return c.postID }
-func (c *Comment) AuthorID() uuid.UUID   { return c.authorID }
-func (c *Comment) Content() string       { return c.content }
-func (c *Comment) ReviewStatus() string  { return c.reviewStatus }
-func (c *Comment) AuthorName() string    { return c.authorName }
-func (c *Comment) AuthorAvatar() string  { return c.authorAvatar }
-func (c *Comment) CreatedAt() time.Time  { return c.createdAt }
+func (c *Comment) ID() uuid.UUID        { return c.id }
+func (c *Comment) PostID() uuid.UUID    { return c.postID }
+func (c *Comment) AuthorID() uuid.UUID  { return c.authorID }
+func (c *Comment) Content() string      { return c.content }
+func (c *Comment) ReviewStatus() string { return c.reviewStatus }
+func (c *Comment) AuthorName() string   { return c.authorName }
+func (c *Comment) AuthorAvatar() string { return c.authorAvatar }
+func (c *Comment) CreatedAt() time.Time { return c.createdAt }

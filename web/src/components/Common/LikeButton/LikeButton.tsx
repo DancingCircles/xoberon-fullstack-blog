@@ -11,18 +11,19 @@ interface LikeButtonProps {
 }
 
 export default function LikeButton({ type, itemId, initialLikes = 0 }: LikeButtonProps) {
-  const { togglePostLike, toggleEssayLike, isPostLiked, isEssayLiked } = useLikes()
+  const { togglePostLike, toggleEssayLike, isPostLiked, isEssayLiked, postLikeCount, essayLikeCount, isPostPending, isEssayPending } = useLikes()
   const { requireAuth } = useAuth()
   const heartRef = useRef<SVGSVGElement>(null)
   const particlesRef = useRef<HTMLDivElement>(null)
 
   const liked = type === 'post' ? isPostLiked(itemId) : isEssayLiked(itemId)
-  const displayLikes = initialLikes + (liked ? 1 : 0)
+  const displayLikes = type === 'post' ? postLikeCount(itemId, initialLikes) : essayLikeCount(itemId, initialLikes)
+  const pending = type === 'post' ? isPostPending(itemId) : isEssayPending(itemId)
 
   const handleLike = () => {
-    if (!requireAuth()) return
-    if (type === 'post') togglePostLike(itemId)
-    else toggleEssayLike(itemId)
+    if (!requireAuth() || pending) return
+    if (type === 'post') void togglePostLike(itemId, displayLikes)
+    else void toggleEssayLike(itemId, displayLikes)
 
     if (!liked && heartRef.current) {
       gsap.fromTo(heartRef.current,
@@ -53,6 +54,7 @@ export default function LikeButton({ type, itemId, initialLikes = 0 }: LikeButto
       className={`like-button ${liked ? 'liked' : ''}`}
       onClick={handleLike}
       aria-label={liked ? 'Unlike' : 'Like'}
+      disabled={pending}
     >
       <div className="like-icon-wrapper">
         <svg

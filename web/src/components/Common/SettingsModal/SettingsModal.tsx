@@ -18,21 +18,22 @@ interface SettingsModalProps {
 }
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
-  const { currentUser, logout } = useAuth()
+  const { currentUser, logout, updateProfile } = useAuth()
   const navigate = useNavigate()
 
   const [section, setSection] = useState<SettingsSection>('profile')
   const [nickname, setNickname] = useState(currentUser?.name ?? '')
-  const [avatarUrl, setAvatarUrl] = useState(currentUser?.avatar ?? '')
+  const [avatarUrl, setAvatarUrl] = useState(currentUser?.avatar?.startsWith('https://') ? currentUser.avatar : '')
+  const [bio, setBio] = useState(currentUser?.bio ?? '')
   const [oldPassword, setOldPassword] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPwd, setConfirmPwd] = useState('')
   const [isSavingPwd, setIsSavingPwd] = useState(false)
+  const [isSavingProfile, setIsSavingProfile] = useState(false)
 
   const { toast } = useToast()
   const overlayRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const mouseDownTargetRef = useRef<EventTarget | null>(null)
 
@@ -54,6 +55,11 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
   useEffect(() => {
     if (!isOpen) return
+    const syncTimer = window.setTimeout(() => {
+      setNickname(currentUser?.name ?? '')
+      setBio(currentUser?.bio ?? '')
+      setAvatarUrl(currentUser?.avatar?.startsWith('https://') ? currentUser.avatar : '')
+    }, 0)
     gsap.set(overlayRef.current, { opacity: 0 })
     gsap.set(panelRef.current, { opacity: 0, scale: 0.95, y: 12 })
 
@@ -70,8 +76,11 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       ease: 'back.out(1.2)',
     }, '-=0.1')
 
-    return () => { tl.kill() }
-  }, [isOpen])
+    return () => {
+      window.clearTimeout(syncTimer)
+      tl.kill()
+    }
+  }, [isOpen, currentUser])
 
   useEffect(() => {
     if (!isOpen) return
@@ -122,26 +131,21 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     return () => clearTimeout(timerRef.current)
   }, [])
 
-  const handleAvatarClick = useCallback(() => {
-    fileInputRef.current?.click()
-  }, [])
-
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (!file.type.startsWith('image/')) {
-      showToast('请选择图片文件')
-      return
+  const handleSaveProfile = useCallback(async () => {
+    const name = nickname.trim()
+    const avatar = avatarUrl.trim()
+    if (!name) { showToast('请输入昵称'); return }
+    if (avatar && !/^https:\/\//i.test(avatar)) { showToast('头像地址必须使用 HTTPS'); return }
+    setIsSavingProfile(true)
+    try {
+      await updateProfile({ name, bio: bio.trim(), avatar })
+      toast.success('个人资料已保存')
+    } catch (err) {
+      toast.error(friendlyErrorMessage(err, '更新资料失败'))
+    } finally {
+      setIsSavingProfile(false)
     }
-    const reader = new FileReader()
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        setAvatarUrl(reader.result)
-      }
-    }
-    reader.readAsDataURL(file)
-    e.target.value = ''
-  }, [showToast])
+  }, [nickname, avatarUrl, bio, updateProfile, showToast, toast])
 
   if (!isOpen) return null
 
@@ -209,16 +213,6 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   alt="Avatar preview"
                   fallbackKey={currentUser?.handle ?? currentUser?.id ?? 'settings-preview'}
                 />
-                <button className="settings-avatar-btn" onClick={handleAvatarClick}>
-                  上传头像
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  style={{ display: 'none' }}
-                />
               </div>
 
               <div className="settings-field">
@@ -233,6 +227,34 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   maxLength={20}
                 />
               </div>
+
+              <div className="settings-field">
+                <label className="settings-label" htmlFor="settings-bio">个人简介</label>
+                <textarea
+                  id="settings-bio"
+                  className="xo-textarea settings-input"
+                  value={bio}
+                  onChange={e => setBio(e.target.value)}
+                  maxLength={500}
+                />
+              </div>
+
+              <div className="settings-field">
+                <label className="settings-label" htmlFor="settings-avatar-url">头像 HTTPS 地址</label>
+                <input
+                  id="settings-avatar-url"
+                  className="xo-input settings-input"
+                  type="url"
+                  value={avatarUrl}
+                  onChange={e => setAvatarUrl(e.target.value)}
+                  placeholder="https://example.com/avatar.png"
+                  maxLength={500}
+                />
+              </div>
+
+              <button className="xo-btn-primary settings-save-btn" onClick={handleSaveProfile} disabled={isSavingProfile}>
+                {isSavingProfile ? '保存中...' : '保存个人资料'}
+              </button>
 
             </>
           )}

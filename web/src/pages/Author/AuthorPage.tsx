@@ -10,7 +10,7 @@ import { useLikes } from '../../hooks/social/useLikes'
 import BlogModal from '../../components/Blog/BlogModal'
 import EssayModal from '../../components/Common/EssayModal'
 import AvatarImage from '../../components/Common/AvatarImage'
-import { fetchUserProfile, deletePost, deleteEssay } from '../../services/runtime'
+import { fetchUserProfile, fetchPosts, fetchEssays, deletePost, deleteEssay } from '../../services/runtime'
 import { friendlyErrorMessage } from '../../services/api'
 import './AuthorPage.css'
 
@@ -28,6 +28,13 @@ export default function AuthorPage() {
 
   const [fetchedUser, setFetchedUser] = useState<UserProfile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [userPosts, setUserPosts] = useState<BlogPost[]>([])
+  const [userEssays, setUserEssays] = useState<EssayItem[]>([])
+  const [postTotal, setPostTotal] = useState(0)
+  const [essayTotal, setEssayTotal] = useState(0)
+  const [postPage, setPostPage] = useState(1)
+  const [essayPage, setEssayPage] = useState(1)
+  const [loadingMore, setLoadingMore] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -75,15 +82,25 @@ export default function AuthorPage() {
 
   const isOwnProfile = currentUser !== null && user !== null && user.id === currentUser.id
 
-  const userPosts = useMemo(() => {
-    if (!user) return []
-    return blogPosts.filter(p => p.author.handle === user.handle)
-  }, [user, blogPosts])
-
-  const userEssays = useMemo(() => {
-    if (!user) return []
-    return essays.filter(e => e.author.handle === user.handle)
-  }, [user, essays])
+  useEffect(() => {
+    if (!user) return
+    let cancelled = false
+    Promise.all([
+      fetchPosts({ page: 1, pageSize: 20, authorId: user.id }),
+      fetchEssays({ page: 1, pageSize: 20, authorId: user.id }),
+    ]).then(([postResult, essayResult]) => {
+      if (cancelled) return
+      setUserPosts(postResult.items)
+      setPostTotal(postResult.total)
+      setPostPage(1)
+      setUserEssays(essayResult.items)
+      setEssayTotal(essayResult.total)
+      setEssayPage(1)
+    }).catch(err => {
+      if (!cancelled) toast.error(friendlyErrorMessage(err, '加载作者内容失败'))
+    })
+    return () => { cancelled = true }
+  }, [user, toast])
 
   const likedPosts = useMemo(() => {
     if (!isOwnProfile) return []
@@ -253,11 +270,11 @@ export default function AuthorPage() {
         {/* Stats */}
         <div className="ap-stats">
           <div className="ap-stat">
-            <span className="ap-stat-num">{userPosts.length}</span>
+            <span className="ap-stat-num">{postTotal}</span>
             <span className="ap-stat-label">Posts</span>
           </div>
           <div className="ap-stat">
-            <span className="ap-stat-num">{userEssays.length}</span>
+            <span className="ap-stat-num">{essayTotal}</span>
             <span className="ap-stat-label">Essays</span>
           </div>
           {isOwnProfile && (
@@ -275,14 +292,14 @@ export default function AuthorPage() {
             onClick={() => switchTab('posts')}
           >
             <span className="sr-tab-label">Posts</span>
-            <span className="sr-tab-count">{userPosts.length}</span>
+            <span className="sr-tab-count">{postTotal}</span>
           </button>
           <button
             className={`sr-tab ${activeTab === 'essays' ? 'sr-tab--active' : ''}`}
             onClick={() => switchTab('essays')}
           >
             <span className="sr-tab-label">Essays</span>
-            <span className="sr-tab-count">{userEssays.length}</span>
+            <span className="sr-tab-count">{essayTotal}</span>
           </button>
           {isOwnProfile && (
             <>
@@ -383,6 +400,8 @@ export default function AuthorPage() {
                             try {
                               await deletePost(post.id)
                               removePost(post.id)
+                              setUserPosts(prev => prev.filter(item => item.id !== post.id))
+                              setPostTotal(prev => Math.max(0, prev - 1))
                               toast.success('帖子已删除')
                             } catch (err) {
                               toast.error(friendlyErrorMessage(err, '删除帖子失败'))
@@ -426,6 +445,8 @@ export default function AuthorPage() {
                             try {
                               await deleteEssay(essay.id)
                               removeEssay(essay.id)
+                              setUserEssays(prev => prev.filter(item => item.id !== essay.id))
+                              setEssayTotal(prev => Math.max(0, prev - 1))
                               toast.success('随笔已删除')
                             } catch (err) {
                               toast.error(friendlyErrorMessage(err, '删除随笔失败'))
@@ -445,6 +466,52 @@ export default function AuthorPage() {
             </>
           )}
         </div>
+        {activeTab === 'posts' && userPosts.length < postTotal && (
+          <button
+            type="button"
+            className="sr-back"
+            disabled={loadingMore}
+            onClick={async () => {
+              if (!user || loadingMore) return
+              setLoadingMore(true)
+              try {
+                const nextPage = postPage + 1
+                const result = await fetchPosts({ page: nextPage, pageSize: 20, authorId: user.id })
+                setUserPosts(prev => {
+                  const ids = new Set(prev.map(item => item.id))
+                  return [...prev, ...result.items.filter(item => !ids.has(item.id))]
+                })
+                setPostTotal(result.total)
+                setPostPage(nextPage)
+              } finally {
+                setLoadingMore(false)
+              }
+            }}
+          >{loadingMore ? '加载中…' : '加载更多'}</button>
+        )}
+        {activeTab === 'essays' && userEssays.length < essayTotal && (
+          <button
+            type="button"
+            className="sr-back"
+            disabled={loadingMore}
+            onClick={async () => {
+              if (!user || loadingMore) return
+              setLoadingMore(true)
+              try {
+                const nextPage = essayPage + 1
+                const result = await fetchEssays({ page: nextPage, pageSize: 20, authorId: user.id })
+                setUserEssays(prev => {
+                  const ids = new Set(prev.map(item => item.id))
+                  return [...prev, ...result.items.filter(item => !ids.has(item.id))]
+                })
+                setEssayTotal(result.total)
+                setEssayPage(nextPage)
+              } finally {
+                setLoadingMore(false)
+              }
+            }}
+          >{loadingMore ? '加载中…' : '加载更多'}</button>
+        )}
       </div>
 
       <BlogModal

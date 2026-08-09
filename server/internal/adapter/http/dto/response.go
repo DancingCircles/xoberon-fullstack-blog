@@ -51,6 +51,24 @@ type UserProfileResp struct {
 	EssayCount int64  `json:"essay_count"`
 }
 
+type CurrentUserResp struct {
+	ID         string    `json:"id"`
+	Name       string    `json:"name"`
+	Handle     string    `json:"handle"`
+	Bio        string    `json:"bio"`
+	Avatar     string    `json:"avatar"`
+	Role       string    `json:"role"`
+	Email      string    `json:"email"`
+	PostCount  int64     `json:"post_count"`
+	EssayCount int64     `json:"essay_count"`
+	CreatedAt  time.Time `json:"created_at"`
+}
+
+type UserLikesResp struct {
+	PostIDs  []string `json:"post_ids"`
+	EssayIDs []string `json:"essay_ids"`
+}
+
 // ---- Post ----
 
 type PostResp struct {

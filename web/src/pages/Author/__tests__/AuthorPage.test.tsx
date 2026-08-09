@@ -20,6 +20,8 @@ vi.mock('../../../services/runtime', () => ({
   ),
   deletePost: vi.fn(() => Promise.resolve()),
   deleteEssay: vi.fn(() => Promise.resolve()),
+  fetchPosts: vi.fn(() => Promise.resolve({ items: [], total: 0 })),
+  fetchEssays: vi.fn(() => Promise.resolve({ items: [], total: 0 })),
 }))
 
 vi.mock('../../../components/Blog/BlogModal', () => ({

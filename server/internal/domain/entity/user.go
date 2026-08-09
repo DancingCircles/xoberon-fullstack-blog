@@ -10,8 +10,8 @@ import (
 	"github.com/google/uuid"
 
 	"xoberon-server/internal/domain/errs"
-	"xoberon-server/pkg/idgen"
 	"xoberon-server/internal/domain/valueobject"
+	"xoberon-server/pkg/idgen"
 )
 
 type User struct {
@@ -148,14 +148,14 @@ func (u *User) PromoteTo(role valueobject.Role) {
 
 // ---- Getters ----
 
-func (u *User) ID() uuid.UUID              { return u.id }
-func (u *User) Username() string            { return u.username }
-func (u *User) Email() valueobject.Email    { return u.email }
-func (u *User) PasswordHash() string        { return u.password.Hash() }
-func (u *User) Name() string                { return u.name }
-func (u *User) Handle() string              { return u.handle }
-func (u *User) Avatar() string              { return u.avatar }
-func (u *User) Bio() string                 { return u.bio }
-func (u *User) Role() valueobject.Role      { return u.role }
-func (u *User) CreatedAt() time.Time        { return u.createdAt }
-func (u *User) UpdatedAt() time.Time        { return u.updatedAt }
+func (u *User) ID() uuid.UUID            { return u.id }
+func (u *User) Username() string         { return u.username }
+func (u *User) Email() valueobject.Email { return u.email }
+func (u *User) PasswordHash() string     { return u.password.Hash() }
+func (u *User) Name() string             { return u.name }
+func (u *User) Handle() string           { return u.handle }
+func (u *User) Avatar() string           { return u.avatar }
+func (u *User) Bio() string              { return u.bio }
+func (u *User) Role() valueobject.Role   { return u.role }
+func (u *User) CreatedAt() time.Time     { return u.createdAt }
+func (u *User) UpdatedAt() time.Time     { return u.updatedAt }

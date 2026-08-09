@@ -6,11 +6,13 @@ import WritePostModal from '../../components/Blog/WritePostModal'
 import Footer from '../../components/Layout/Footer'
 import FloatingButton from '../../components/Common/FloatingButton'
 import { useAuth } from '../../hooks/auth/useAuth'
+import { useData } from '../../hooks/auth/useData'
 import './BlogPage.css'
 
 export default function BlogPage() {
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false)
   const { requireAuth } = useAuth()
+  const { hasMorePosts, loadMorePosts } = useData()
   const scrollTargetRef = useRef<HTMLDivElement>(null)
 
   const handleWrite = useCallback(() => {
@@ -44,6 +46,7 @@ export default function BlogPage() {
       
       <div className="blog-all-posts-section">
         <BlogList />
+        {hasMorePosts && <button className="xo-btn-secondary" onClick={() => void loadMorePosts()}>加载更多文章</button>}
       </div>
 
       <Footer />

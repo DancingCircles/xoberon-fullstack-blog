@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import DataTable, { type Column } from '../../../components/Admin/DataTable'
 import { fetchAdminContacts, markContactRead, type AdminContact } from '../../../services/runtime'
 import { useToast } from '../../../hooks/social/useToast'
@@ -29,8 +29,6 @@ export default function AdminContactsPage() {
   const [_isLoading, setIsLoading] = useState(true)
   const [readFilter, setReadFilter] = useState<ReadFilter>('all')
   const [expandedId, setExpandedId] = useState<string | null>(null)
-  const [replyText, setReplyText] = useState('')
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
   const loadContacts = useCallback(async () => {
     setIsLoading(true)
@@ -64,12 +62,10 @@ export default function AdminContactsPage() {
   const handleToggleRead = useCallback(async (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation()
     const target = contacts.find(c => c.id === id)
-    if (!target) return
+    if (!target || target.isRead) return
     try {
-      if (!target.isRead) {
-        await markContactRead(id)
-      }
-      setContacts(prev => prev.map(c => c.id === id ? { ...c, isRead: !c.isRead } : c))
+      await markContactRead(id)
+      setContacts(prev => prev.map(c => c.id === id ? { ...c, isRead: true } : c))
     } catch (err) {
       toast.error(friendlyErrorMessage(err, '更新已读状态失败'))
     }
@@ -79,25 +75,16 @@ export default function AdminContactsPage() {
     setExpandedId(prev => {
       const next = prev === key ? null : key
       if (next) {
-        setReplyText('')
-        // If not read, trigger read on server
         const target = contacts.find(c => c.id === key)
         if (target && !target.isRead) {
           markContactRead(key).then(() => {
             setContacts(p => p.map(c => c.id === key ? { ...c, isRead: true } : c))
           }).catch(err => toast.error(friendlyErrorMessage(err, '标记已读失败')))
         }
-        requestAnimationFrame(() => textareaRef.current?.focus())
       }
       return next
     })
   }, [contacts, toast])
-
-  const handleSendReply = useCallback((_contactId: string) => {
-    const trimmed = replyText.trim()
-    if (!trimmed) return
-    toast.info('回复功能即将上线')
-  }, [replyText, toast])
 
   const columns = useMemo<Column<AdminContact>[]>(() => [
     {
@@ -134,16 +121,6 @@ export default function AdminContactsPage() {
       ),
     },
     {
-      key: 'replies',
-      title: '回复',
-      width: '56px',
-      render: _row => (
-        <span className="acp-reply-count">
-          0
-        </span>
-      ),
-    },
-    {
       key: 'time',
       title: '提交时间',
       width: '110px',
@@ -158,7 +135,7 @@ export default function AdminContactsPage() {
           className="acp-btn"
           onClick={e => handleToggleRead(row.id, e)}
         >
-          {row.isRead ? '标记未读' : '标记已读'}
+          {row.isRead ? '已读' : '标记已读'}
         </button>
       ),
     },
@@ -178,35 +155,8 @@ export default function AdminContactsPage() {
         {row.message}
       </div>
 
-      <div className="acp-expand__compose">
-        <textarea
-          ref={expandedId === row.id ? textareaRef : undefined}
-          className="acp-expand__textarea"
-          value={expandedId === row.id ? replyText : ''}
-          onChange={e => setReplyText(e.target.value)}
-          placeholder={`回复 ${row.name}…`}
-          rows={3}
-          maxLength={300}
-          onKeyDown={e => {
-            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-              e.preventDefault()
-              handleSendReply(row.id)
-            }
-          }}
-        />
-        <div className="acp-expand__compose-actions">
-          <span className="acp-expand__compose-hint">Ctrl + Enter 发送</span>
-          <button
-            className="acp-expand__send-btn"
-            disabled={!replyText.trim()}
-            onClick={() => handleSendReply(row.id)}
-          >
-            发送回复
-          </button>
-        </div>
-      </div>
     </div>
-  ), [expandedId, replyText, handleSendReply])
+  ), [])
 
   return (
     <div className="acp">

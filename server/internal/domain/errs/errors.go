@@ -30,9 +30,9 @@ func (e *AppError) Error() string {
 	return e.message
 }
 
-func (e *AppError) Code() Code    { return e.code }
+func (e *AppError) Code() Code      { return e.code }
 func (e *AppError) Message() string { return e.message }
-func (e *AppError) Unwrap() error  { return e.cause }
+func (e *AppError) Unwrap() error   { return e.cause }
 
 func newErr(code Code, msg string) *AppError {
 	return &AppError{code: code, message: msg}

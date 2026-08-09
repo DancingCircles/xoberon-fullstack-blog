@@ -8,7 +8,7 @@ import '../../../../test/mocks/gsap'
 import '../../../../test/mocks/react-markdown'
 
 vi.mock('../../../../services/runtime', () => ({
-  fetchComments: vi.fn(() => Promise.resolve([])),
+  fetchComments: vi.fn(() => Promise.resolve({ items: [], total: 0 })),
   createComment: vi.fn(),
   recordView: vi.fn(() => Promise.resolve()),
 }))

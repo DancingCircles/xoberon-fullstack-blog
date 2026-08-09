@@ -14,10 +14,12 @@ export interface FetchPostsParams extends PaginationParams {
   category?: string
   tag?: string
   keyword?: string
+  authorId?: string
 }
 
 export interface FetchEssaysParams extends PaginationParams {
   keyword?: string
+  authorId?: string
 }
 
 export interface ApiCaptchaResponseDto {
@@ -653,6 +655,19 @@ export async function logoutApi(): Promise<void> {
   clearAuthToken()
 }
 
+export async function fetchCurrentUser(): Promise<UserProfile> {
+  const state = loadState()
+  return withDynamicCounts(state, currentUserOrThrow(state))
+}
+
+export async function fetchMyLikes(): Promise<{ postIds: string[]; essayIds: string[] }> {
+  currentUserOrThrow(loadState())
+  return {
+    postIds: [...loadLikedIds(POST_LIKES_KEY)],
+    essayIds: [...loadLikedIds(ESSAY_LIKES_KEY)],
+  }
+}
+
 export async function updateProfileApi(
   data: { name: string; bio?: string; avatar?: string },
 ): Promise<UserProfile> {
@@ -706,6 +721,7 @@ export async function fetchPosts(
       post.tags.some(tag => tag.toLowerCase().includes(keyword)),
     )
   }
+  if (params?.authorId) items = items.filter(post => post.author.handle && state.users.find(user => user.id === params.authorId)?.handle === post.author.handle)
 
   return paginate(items, params)
 }
@@ -758,6 +774,30 @@ export async function createPost(data: {
   })
 }
 
+export async function updatePost(id: string, data: {
+  title: string
+  content: string
+  category: BlogPost['category']
+  tags: string[]
+}): Promise<BlogPost> {
+  return mutateState(state => {
+    const user = currentUserOrThrow(state)
+    const index = state.posts.findIndex(item => item.id === id)
+    if (index < 0) throw new Error('文章不存在')
+    if (state.posts[index].author.handle !== user.handle) throw new Error('无权编辑此文章')
+    const updated = {
+      ...state.posts[index],
+      title: data.title.trim(),
+      content: data.content.trim(),
+      excerpt: excerptFromContent(data.content),
+      category: data.category,
+      tags: data.tags,
+    }
+    state.posts[index] = updated
+    return updated
+  })
+}
+
 export async function deletePost(id: string): Promise<void> {
   mutateState(state => {
     const post = state.posts.find(item => item.id === id)
@@ -773,7 +813,10 @@ export async function togglePostLike(
   id: string,
 ): Promise<{ liked: boolean; likeCount: number }> {
   return mutateState(state => {
-    const liked = loadLikedIds(POST_LIKES_KEY).has(id)
+    const ids = loadLikedIds(POST_LIKES_KEY)
+    const liked = !ids.has(id)
+    if (liked) ids.add(id); else ids.delete(id)
+    writeJson(POST_LIKES_KEY, [...ids])
     let likeCount = 0
     state.posts = state.posts.map(post => {
       if (post.id !== id) return post
@@ -784,9 +827,9 @@ export async function togglePostLike(
   })
 }
 
-export async function fetchComments(postId: string): Promise<Comment[]> {
+export async function fetchComments(postId: string, params?: PaginationParams): Promise<{ items: Comment[]; total: number }> {
   const state = loadState()
-  return state.posts.find(post => post.id === postId)?.comments ?? []
+  return paginate(state.posts.find(post => post.id === postId)?.comments ?? [], params)
 }
 
 export async function createComment(postId: string, content: string): Promise<Comment> {
@@ -871,6 +914,7 @@ export async function fetchEssays(
       essay.author.name.toLowerCase().includes(keyword),
     )
   }
+  if (params?.authorId) items = items.filter(essay => essay.author.handle && state.users.find(user => user.id === params.authorId)?.handle === essay.author.handle)
 
   return paginate(items, params)
 }
@@ -917,6 +961,27 @@ export async function createEssay(data: {
   })
 }
 
+export async function updateEssay(id: string, data: {
+  title: string
+  excerpt: string
+  content: string
+}): Promise<EssayItem> {
+  return mutateState(state => {
+    const user = currentUserOrThrow(state)
+    const index = state.essays.findIndex(item => item.id === id)
+    if (index < 0) throw new Error('随笔不存在')
+    if (state.essays[index].author.handle !== user.handle) throw new Error('无权编辑此随笔')
+    const updated = {
+      ...state.essays[index],
+      title: data.title.trim(),
+      excerpt: data.excerpt.trim() || excerptFromContent(data.content, 60),
+      content: data.content.trim(),
+    }
+    state.essays[index] = updated
+    return updated
+  })
+}
+
 export async function deleteEssay(id: string): Promise<void> {
   mutateState(state => {
     const essay = state.essays.find(item => item.id === id)
@@ -932,7 +997,10 @@ export async function toggleEssayLike(
   id: string,
 ): Promise<{ liked: boolean; likeCount: number }> {
   return mutateState(state => {
-    const liked = loadLikedIds(ESSAY_LIKES_KEY).has(id)
+    const ids = loadLikedIds(ESSAY_LIKES_KEY)
+    const liked = !ids.has(id)
+    if (liked) ids.add(id); else ids.delete(id)
+    writeJson(ESSAY_LIKES_KEY, [...ids])
     let likeCount = 0
     state.essays = state.essays.map(essay => {
       if (essay.id !== id) return essay

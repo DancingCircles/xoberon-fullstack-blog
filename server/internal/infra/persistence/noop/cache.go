@@ -7,8 +7,8 @@ type NoopPostCache struct{}
 
 func NewNoopPostCache() *NoopPostCache { return &NoopPostCache{} }
 
-func (n *NoopPostCache) GetDetail(_ context.Context, _ string) ([]byte, error) { return nil, nil }
-func (n *NoopPostCache) GetList(_ context.Context, _ string) ([]byte, error)   { return nil, nil }
+func (n *NoopPostCache) GetDetail(_ context.Context, _ string) ([]byte, error)      { return nil, nil }
+func (n *NoopPostCache) GetList(_ context.Context, _ string) ([]byte, error)        { return nil, nil }
 func (n *NoopPostCache) SetDetail(_ context.Context, _ string, _ interface{}) error { return nil }
 func (n *NoopPostCache) SetList(_ context.Context, _ string, _ interface{}) error   { return nil }
 func (n *NoopPostCache) SetNullMarker(_ context.Context, _ string) error            { return nil }
@@ -20,8 +20,8 @@ type NoopEssayCache struct{}
 
 func NewNoopEssayCache() *NoopEssayCache { return &NoopEssayCache{} }
 
-func (n *NoopEssayCache) GetDetail(_ context.Context, _ string) ([]byte, error) { return nil, nil }
-func (n *NoopEssayCache) GetList(_ context.Context, _ string) ([]byte, error)   { return nil, nil }
+func (n *NoopEssayCache) GetDetail(_ context.Context, _ string) ([]byte, error)      { return nil, nil }
+func (n *NoopEssayCache) GetList(_ context.Context, _ string) ([]byte, error)        { return nil, nil }
 func (n *NoopEssayCache) SetDetail(_ context.Context, _ string, _ interface{}) error { return nil }
 func (n *NoopEssayCache) SetList(_ context.Context, _ string, _ interface{}) error   { return nil }
 func (n *NoopEssayCache) SetNullMarker(_ context.Context, _ string) error            { return nil }

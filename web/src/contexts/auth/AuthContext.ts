@@ -10,6 +10,8 @@ export interface AuthContextType {
   currentUser: UserProfile | null
   isAuthenticated: boolean
   isLoading: boolean
+  isChecking: boolean
+  authStatus: 'checking' | 'authenticated' | 'anonymous'
   isAdmin: boolean
   isOwner: boolean
   login: (username: string, password: string) => Promise<AuthActionResult>

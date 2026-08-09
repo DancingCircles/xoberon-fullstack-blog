@@ -6,8 +6,10 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, isChecking } = useAuth()
   const location = useLocation()
+
+  if (isChecking) return <div className="page-loading" role="status">正在验证登录状态…</div>
 
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />

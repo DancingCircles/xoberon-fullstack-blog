@@ -1,106 +1,92 @@
-import { useState, useCallback, useMemo, type ReactNode } from 'react'
+import { useState, useCallback, useEffect, useMemo, type ReactNode } from 'react'
 import { LikesContext } from './LikesContext'
-import { togglePostLike as apiTogglePostLike, toggleEssayLike as apiToggleEssayLike } from '../../services/runtime'
+import { togglePostLike as apiTogglePostLike, toggleEssayLike as apiToggleEssayLike, fetchMyLikes } from '../../services/runtime'
+import { useAuth } from '../../hooks/auth/useAuth'
 
-const STORAGE_KEY_POSTS = 'xoberon-liked-posts'
-const STORAGE_KEY_ESSAYS = 'xoberon-liked-essays'
-
-function loadFromStorage(key: string): Set<string> {
-  try {
-    const raw = localStorage.getItem(key)
-    if (raw) return new Set(JSON.parse(raw) as string[])
-  } catch { /* ignore */ }
-  return new Set()
-}
-
-function saveToStorage(key: string, ids: Set<string>) {
-  localStorage.setItem(key, JSON.stringify([...ids]))
-}
-
-interface LikesProviderProps {
-  children: ReactNode
-}
+interface LikesProviderProps { children: ReactNode }
+type CountMap = Record<string, number>
 
 export function LikesProvider({ children }: LikesProviderProps) {
-  const [likedPostIds, setLikedPostIds] = useState(() => loadFromStorage(STORAGE_KEY_POSTS))
-  const [likedEssayIds, setLikedEssayIds] = useState(() => loadFromStorage(STORAGE_KEY_ESSAYS))
+  const { currentUser, isChecking } = useAuth()
+  const [likedPostIds, setLikedPostIds] = useState<Set<string>>(new Set())
+  const [likedEssayIds, setLikedEssayIds] = useState<Set<string>>(new Set())
+  const [postCounts, setPostCounts] = useState<CountMap>({})
+  const [essayCounts, setEssayCounts] = useState<CountMap>({})
+  const [pendingPosts, setPendingPosts] = useState<Set<string>>(new Set())
+  const [pendingEssays, setPendingEssays] = useState<Set<string>>(new Set())
 
-  const togglePostLike = useCallback(async (id: string) => {
-    // 乐观更新：先更新 UI，再调 API
-    setLikedPostIds(prev => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      saveToStorage(STORAGE_KEY_POSTS, next)
-      return next
-    })
+  useEffect(() => {
+    let cancelled = false
+    if (isChecking) return () => { cancelled = true }
+    const load = currentUser
+      ? fetchMyLikes()
+      : Promise.resolve({ postIds: [] as string[], essayIds: [] as string[] })
+    load.then(({ postIds, essayIds }) => {
+      if (!cancelled) {
+        setLikedPostIds(new Set(postIds))
+        setLikedEssayIds(new Set(essayIds))
+        setPostCounts({})
+        setEssayCounts({})
+      }
+    }).catch(() => {})
+    return () => { cancelled = true }
+  }, [currentUser, isChecking])
 
+  const togglePostLike = useCallback(async (id: string, currentCount = 0) => {
+    if (pendingPosts.has(id)) return
+    const wasLiked = likedPostIds.has(id)
+    const previousCount = postCounts[id] ?? currentCount
+    setPendingPosts(prev => new Set(prev).add(id))
+    setLikedPostIds(prev => { const next = new Set(prev); if (wasLiked) next.delete(id); else next.add(id); return next })
+    setPostCounts(prev => ({ ...prev, [id]: Math.max(0, previousCount + (wasLiked ? -1 : 1)) }))
     try {
-      const { liked } = await apiTogglePostLike(id)
-      // API 返回的真实状态可能与乐观更新不一致，以 API 为准
-      setLikedPostIds(prev => {
-        const next = new Set(prev)
-        if (liked) next.add(id)
-        else next.delete(id)
-        saveToStorage(STORAGE_KEY_POSTS, next)
-        return next
-      })
+      const result = await apiTogglePostLike(id)
+      setLikedPostIds(prev => { const next = new Set(prev); if (result.liked) next.add(id); else next.delete(id); return next })
+      setPostCounts(prev => ({ ...prev, [id]: result.likeCount }))
     } catch {
-      // API 失败时回滚乐观更新
-      setLikedPostIds(prev => {
-        const next = new Set(prev)
-        if (next.has(id)) next.delete(id)
-        else next.add(id)
-        saveToStorage(STORAGE_KEY_POSTS, next)
+      setLikedPostIds(prev => { const next = new Set(prev); if (wasLiked) next.add(id); else next.delete(id); return next })
+      setPostCounts(prev => {
+        const next = { ...prev }
+        next[id] = previousCount
         return next
       })
+    } finally {
+      setPendingPosts(prev => { const next = new Set(prev); next.delete(id); return next })
     }
-  }, [])
+  }, [likedPostIds, pendingPosts, postCounts])
 
-  const toggleEssayLike = useCallback(async (id: string) => {
-    setLikedEssayIds(prev => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      saveToStorage(STORAGE_KEY_ESSAYS, next)
-      return next
-    })
-
+  const toggleEssayLike = useCallback(async (id: string, currentCount = 0) => {
+    if (pendingEssays.has(id)) return
+    const wasLiked = likedEssayIds.has(id)
+    const previousCount = essayCounts[id] ?? currentCount
+    setPendingEssays(prev => new Set(prev).add(id))
+    setLikedEssayIds(prev => { const next = new Set(prev); if (wasLiked) next.delete(id); else next.add(id); return next })
+    setEssayCounts(prev => ({ ...prev, [id]: Math.max(0, previousCount + (wasLiked ? -1 : 1)) }))
     try {
-      const { liked } = await apiToggleEssayLike(id)
-      setLikedEssayIds(prev => {
-        const next = new Set(prev)
-        if (liked) next.add(id)
-        else next.delete(id)
-        saveToStorage(STORAGE_KEY_ESSAYS, next)
-        return next
-      })
+      const result = await apiToggleEssayLike(id)
+      setLikedEssayIds(prev => { const next = new Set(prev); if (result.liked) next.add(id); else next.delete(id); return next })
+      setEssayCounts(prev => ({ ...prev, [id]: result.likeCount }))
     } catch {
-      setLikedEssayIds(prev => {
-        const next = new Set(prev)
-        if (next.has(id)) next.delete(id)
-        else next.add(id)
-        saveToStorage(STORAGE_KEY_ESSAYS, next)
+      setLikedEssayIds(prev => { const next = new Set(prev); if (wasLiked) next.add(id); else next.delete(id); return next })
+      setEssayCounts(prev => {
+        const next = { ...prev }
+        next[id] = previousCount
         return next
       })
+    } finally {
+      setPendingEssays(prev => { const next = new Set(prev); next.delete(id); return next })
     }
-  }, [])
-
-  const isPostLiked = useCallback((id: string) => likedPostIds.has(id), [likedPostIds])
-  const isEssayLiked = useCallback((id: string) => likedEssayIds.has(id), [likedEssayIds])
+  }, [likedEssayIds, pendingEssays, essayCounts])
 
   const value = useMemo(() => ({
-    likedPostIds,
-    likedEssayIds,
-    togglePostLike,
-    toggleEssayLike,
-    isPostLiked,
-    isEssayLiked,
-  }), [likedPostIds, likedEssayIds, togglePostLike, toggleEssayLike, isPostLiked, isEssayLiked])
+    likedPostIds, likedEssayIds, togglePostLike, toggleEssayLike,
+    isPostLiked: (id: string) => likedPostIds.has(id),
+    isEssayLiked: (id: string) => likedEssayIds.has(id),
+    postLikeCount: (id: string, fallback: number) => postCounts[id] ?? fallback,
+    essayLikeCount: (id: string, fallback: number) => essayCounts[id] ?? fallback,
+    isPostPending: (id: string) => pendingPosts.has(id),
+    isEssayPending: (id: string) => pendingEssays.has(id),
+  }), [likedPostIds, likedEssayIds, togglePostLike, toggleEssayLike, postCounts, essayCounts, pendingPosts, pendingEssays])
 
-  return (
-    <LikesContext.Provider value={value}>
-      {children}
-    </LikesContext.Provider>
-  )
+  return <LikesContext.Provider value={value}>{children}</LikesContext.Provider>
 }

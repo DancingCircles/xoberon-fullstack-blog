@@ -10,6 +10,7 @@ import (
 
 	"xoberon-server/internal/adapter/http/handler"
 	"xoberon-server/internal/adapter/http/middleware"
+	"xoberon-server/internal/domain/repository"
 	"xoberon-server/internal/infra/auth"
 )
 
@@ -33,6 +34,7 @@ type RouterDeps struct {
 	TrustedProxies []string
 	RateLimiter    middleware.RateLimitFunc
 	HealthCheck    func(ctx context.Context) error
+	Users          repository.UserRepository
 }
 
 func NewRouter(deps RouterDeps, h Handlers) *gin.Engine {
@@ -82,7 +84,7 @@ func NewRouter(deps RouterDeps, h Handlers) *gin.Engine {
 		optAuth := middleware.OptionalAuth(deps.JWTMgr, deps.Blacklist)
 		v1.GET("/posts/recommendations", optAuth, h.Recommendation.Recommendations)
 
-		v1.GET("/posts/:slug", h.Post.GetBySlug)
+		v1.GET("/posts/:id", h.Post.GetBySlug)
 		v1.GET("/posts/:id/comments", h.Comment.ListByPost)
 
 		v1.GET("/essays", h.Essay.List)
@@ -91,7 +93,7 @@ func NewRouter(deps RouterDeps, h Handlers) *gin.Engine {
 		v1.GET("/users/:handle", h.User.GetProfile)
 
 		// ---- 需要登录 ----
-		authMW := middleware.Auth(deps.JWTMgr, deps.Blacklist, deps.Log)
+		authMW := middleware.Auth(deps.JWTMgr, deps.Blacklist, deps.Log, deps.Users)
 		authed := v1.Group("", authMW)
 		{
 			authed.POST("/auth/logout", h.Auth.Logout)
@@ -111,6 +113,8 @@ func NewRouter(deps RouterDeps, h Handlers) *gin.Engine {
 			authed.POST("/essays/:id/like", rl, h.Essay.Like)
 
 			authed.GET("/users", h.User.Search)
+			authed.GET("/users/me", h.User.GetMe)
+			authed.GET("/users/me/likes", h.User.GetMyLikes)
 			authed.PUT("/users/me", rl, h.User.UpdateMe)
 			authed.PUT("/users/me/password", rl, h.User.ChangePassword)
 		}

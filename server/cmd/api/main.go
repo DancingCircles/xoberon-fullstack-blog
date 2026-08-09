@@ -142,7 +142,7 @@ func main() {
 	recordViewHandler := command.NewRecordViewHandler(viewRepo, postRepo)
 	submitContactHandler := command.NewSubmitContactHandler(contactRepo)
 	updateUserRoleHandler := command.NewUpdateUserRoleHandler(userRepo)
-	updateProfileHandler := command.NewUpdateProfileHandler(userRepo)
+	updateProfileHandler := command.NewUpdateProfileHandler(userRepo, postCache.InvalidateAll, essayCache.InvalidateAll)
 	markContactReadHandler := command.NewMarkContactReadHandler(contactRepo)
 	changePasswordHandler := command.NewChangePasswordHandler(userRepo)
 
@@ -168,7 +168,7 @@ func main() {
 		Post:           handler.NewPostHandler(listPostsHandler, getPostHandler, createPostHandler, updatePostHandler, deletePostHandler, toggleLikeHandler, postCache),
 		Essay:          handler.NewEssayHandler(listEssaysHandler, getEssayHandler, createEssayHandler, updateEssayHandler, deleteEssayHandler, toggleLikeHandler, essayCache),
 		Comment:        handler.NewCommentHandler(listCommentsByPostHandler, createCommentHandler, deleteCommentHandler),
-		User:           handler.NewUserHandler(getUserProfileHandler, listUsersHandler, searchUsersHandler, updateUserRoleHandler, updateProfileHandler, changePasswordHandler),
+		User:           handler.NewUserHandler(getUserProfileHandler, listUsersHandler, searchUsersHandler, updateUserRoleHandler, updateProfileHandler, changePasswordHandler, likeRepo),
 		Contact:        handler.NewContactHandler(submitContactHandler, listContactsHandler, markContactReadHandler),
 		Recommendation: handler.NewRecommendationHandler(getRecommendationsHandler, recordViewHandler),
 		Admin:          handler.NewAdminHandler(db, postCache, essayCache, rdbClient),
@@ -194,6 +194,7 @@ func main() {
 			}
 			return nil
 		},
+		Users: userRepo,
 	}, handlers)
 
 	// ---- 后台内容巡查 Worker（异步路径：通义千问语义审核）----

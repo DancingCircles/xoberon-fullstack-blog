@@ -8,6 +8,7 @@ import '../../../../test/mocks/gsap'
 vi.mock('../../../../services/runtime', () => ({
   togglePostLike: vi.fn(() => Promise.resolve({ liked: true, likeCount: 1 })),
   toggleEssayLike: vi.fn(() => Promise.resolve({ liked: true, likeCount: 1 })),
+  fetchMyLikes: vi.fn(() => Promise.resolve({ postIds: [], essayIds: [] })),
 }))
 
 import { togglePostLike as apiTogglePostLike, toggleEssayLike as apiToggleEssayLike } from '../../../../services/runtime'
@@ -15,23 +16,23 @@ import { togglePostLike as apiTogglePostLike, toggleEssayLike as apiToggleEssayL
 describe('LikeButton', () => {
   beforeEach(() => {
     localStorage.clear()
-    vi.mocked(apiTogglePostLike).mockResolvedValue({ liked: true, likeCount: 1 })
-    vi.mocked(apiToggleEssayLike).mockResolvedValue({ liked: true, likeCount: 1 })
+    vi.mocked(apiTogglePostLike).mockResolvedValue({ liked: true, likeCount: 11 })
+    vi.mocked(apiToggleEssayLike).mockResolvedValue({ liked: true, likeCount: 6 })
   })
 
   it('显示初始点赞数', () => {
-    renderWithProviders(<LikeButton type="post" itemId="p1" initialLikes={10} />)
+    renderWithProviders(<LikeButton type="post" itemId="p1" initialLikes={10} />, { withLikes: true })
     expect(screen.getByText('10')).toBeInTheDocument()
   })
 
   it('未点赞时 aria-label 为 "Like"', () => {
-    renderWithProviders(<LikeButton type="post" itemId="p1" />)
+    renderWithProviders(<LikeButton type="post" itemId="p1" />, { withLikes: true })
     expect(screen.getByLabelText('Like')).toBeInTheDocument()
   })
 
   it('点击后切换点赞状态', async () => {
     const user = userEvent.setup()
-    renderWithProviders(<LikeButton type="post" itemId="p1" initialLikes={10} />)
+    renderWithProviders(<LikeButton type="post" itemId="p1" initialLikes={10} />, { withLikes: true })
     await user.click(screen.getByLabelText('Like'))
     await waitFor(() => {
       expect(screen.getByLabelText('Unlike')).toBeInTheDocument()
@@ -44,7 +45,7 @@ describe('LikeButton', () => {
       .mockResolvedValueOnce({ liked: true, likeCount: 11 })
       .mockResolvedValueOnce({ liked: false, likeCount: 10 })
     const user = userEvent.setup()
-    renderWithProviders(<LikeButton type="post" itemId="p1" initialLikes={10} />)
+    renderWithProviders(<LikeButton type="post" itemId="p1" initialLikes={10} />, { withLikes: true })
     await user.click(screen.getByLabelText('Like'))
     await waitFor(() => expect(screen.getByText('11')).toBeInTheDocument())
     await user.click(screen.getByLabelText('Unlike'))
@@ -53,7 +54,7 @@ describe('LikeButton', () => {
 
   it('essay 类型同样工作', async () => {
     const user = userEvent.setup()
-    renderWithProviders(<LikeButton type="essay" itemId="e1" initialLikes={5} />)
+    renderWithProviders(<LikeButton type="essay" itemId="e1" initialLikes={5} />, { withLikes: true })
     await user.click(screen.getByLabelText('Like'))
     await waitFor(() => {
       expect(screen.getByText('6')).toBeInTheDocument()
@@ -65,7 +66,7 @@ describe('LikeButton', () => {
     const requireAuth = vi.fn(() => false)
     renderWithProviders(
       <LikeButton type="post" itemId="p1" initialLikes={0} />,
-      { auth: { requireAuth } },
+      { auth: { requireAuth }, withLikes: true },
     )
     await user.click(screen.getByLabelText('Like'))
     expect(requireAuth).toHaveBeenCalled()

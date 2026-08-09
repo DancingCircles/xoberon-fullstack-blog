@@ -26,7 +26,7 @@ interface BlogModalProps {
 export default function BlogModal({ post, isOpen, onClose, onPostClick }: BlogModalProps) {
   const navigate = useNavigate()
   const { currentUser, requireAuth } = useAuth()
-  const { removePost } = useData()
+  const { removePost, updatePost } = useData()
   const { toast } = useToast()
   const isOwnPost = currentUser !== null && post !== null && post.author.handle === currentUser.handle
   const overlayRef = useRef<HTMLDivElement>(null)
@@ -36,16 +36,32 @@ export default function BlogModal({ post, isOpen, onClose, onPostClick }: BlogMo
   const [linkCopied, setLinkCopied] = useState(false)
   const [commentText, setCommentText] = useState('')
   const [comments, setComments] = useState<Comment[]>([])
+  const [commentTotal, setCommentTotal] = useState(0)
+  const [commentPage, setCommentPage] = useState(1)
   const [loadingComments, setLoadingComments] = useState(true)
+  const [loadingMoreComments, setLoadingMoreComments] = useState(false)
   const [commentsExpanded, setCommentsExpanded] = useState(false)
+  const [savedPost, setSavedPost] = useState<BlogPost | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editTitle, setEditTitle] = useState('')
+  const [editContent, setEditContent] = useState('')
+  const [editCategory, setEditCategory] = useState<BlogPost['category']>('Design')
+  const [editTags, setEditTags] = useState('')
+  const [isSavingEdit, setIsSavingEdit] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const mouseDownTargetRef = useRef<EventTarget | null>(null)
 
   useEffect(() => {
     if (!isOpen || !post) return
     let cancelled = false
-    fetchComments(post.id)
-      .then(data => { if (!cancelled) setComments(data) })
+    fetchComments(post.id, { page: 1, pageSize: 20 })
+      .then(data => {
+        if (!cancelled) {
+          setComments(data.items)
+          setCommentTotal(data.total)
+          setCommentPage(1)
+        }
+      })
       .catch(() => {})
       .finally(() => { if (!cancelled) setLoadingComments(false) })
     if (currentUser) {
@@ -54,6 +70,8 @@ export default function BlogModal({ post, isOpen, onClose, onPostClick }: BlogMo
     return () => {
       cancelled = true
       setComments([])
+      setCommentTotal(0)
+      setCommentPage(1)
       setLoadingComments(true)
     }
   }, [isOpen, post, currentUser])
@@ -162,6 +180,7 @@ export default function BlogModal({ post, isOpen, onClose, onPostClick }: BlogMo
   }
 
   if (!post) return null
+  const displayedPost = savedPost ?? post
 
   return createPortal(
     <div
@@ -184,6 +203,21 @@ export default function BlogModal({ post, isOpen, onClose, onPostClick }: BlogMo
             <path d="M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
+
+        {isOwnPost && (
+          <button
+            className="modal-delete-btn"
+            style={{ right: '4rem' }}
+            type="button"
+            onClick={() => {
+              setEditTitle(displayedPost.title)
+              setEditContent(displayedPost.content)
+              setEditCategory(displayedPost.category)
+              setEditTags(displayedPost.tags.join(', '))
+              setIsEditing(true)
+            }}
+          >编辑</button>
+        )}
 
         {isOwnPost && (
           <button
@@ -218,13 +252,44 @@ export default function BlogModal({ post, isOpen, onClose, onPostClick }: BlogMo
           {/* Left Side: Post Details */}
           <div className="blog-modal-post" ref={postContentRef}>
             <div className="blog-modal-header">
-              <span className="blog-modal-category">{post.category}</span>
+              <span className="blog-modal-category">{displayedPost.category}</span>
               <div className="blog-modal-meta">
                 <span>{post.date}</span>
               </div>
             </div>
 
-            <h2 className="blog-modal-title">{post.title}</h2>
+            <h2 className="blog-modal-title">{displayedPost.title}</h2>
+
+            {isEditing && (
+              <div className="comment-input-area">
+                <input value={editTitle} maxLength={30} onChange={e => setEditTitle(e.target.value)} placeholder="标题" />
+                <select value={editCategory} onChange={e => setEditCategory(e.target.value as BlogPost['category'])}>
+                  <option value="Design">Design</option><option value="Tech">Tech</option><option value="Culture">Culture</option>
+                </select>
+                <input value={editTags} maxLength={100} onChange={e => setEditTags(e.target.value)} placeholder="标签，以逗号分隔" />
+                <textarea value={editContent} maxLength={2000} rows={10} onChange={e => setEditContent(e.target.value)} />
+                <button
+                  className="comment-submit-btn"
+                  disabled={isSavingEdit}
+                  onClick={async () => {
+                    const tags = editTags.split(/[,，]/).map(item => item.trim()).filter(Boolean)
+                    if (!editTitle.trim() || editTitle.trim().length > 30) { toast.info('标题为必填项且不能超过 30 字符'); return }
+                    if (editContent.trim().length < 20 || editContent.trim().length > 2000) { toast.info('内容长度需为 20–2000 字符'); return }
+                    if (tags.length > 3 || tags.some(tag => tag.length > 30)) { toast.info('最多 3 个标签，单个不超过 30 字符'); return }
+                    setIsSavingEdit(true)
+                    try {
+                      const updated = await updatePost(post.id, { title: editTitle.trim(), content: editContent.trim(), category: editCategory, tags })
+                      setSavedPost(updated)
+                      setIsEditing(false)
+                      toast.success('文章已更新')
+                    } catch (err) {
+                      toast.error(friendlyErrorMessage(err, '更新文章失败'))
+                    } finally { setIsSavingEdit(false) }
+                  }}
+                >保存修改</button>
+                <button type="button" onClick={() => setIsEditing(false)}>取消</button>
+              </div>
+            )}
 
             <div className="blog-modal-topbar">
               <AvatarImage
@@ -258,13 +323,13 @@ export default function BlogModal({ post, isOpen, onClose, onPostClick }: BlogMo
             </div>
 
             <div className="blog-modal-body">
-              <MarkdownRenderer content={post.content} />
+              <MarkdownRenderer content={displayedPost.content} />
             </div>
 
             <div className="blog-modal-footer-content">
-              {post.tags && post.tags.length > 0 && (
+              {displayedPost.tags && displayedPost.tags.length > 0 && (
                 <div className="blog-tags">
-                  {post.tags.map(tag => (
+                  {displayedPost.tags.map(tag => (
                     <span key={tag} className="blog-tag">#{tag}</span>
                   ))}
                 </div>
@@ -288,7 +353,7 @@ export default function BlogModal({ post, isOpen, onClose, onPostClick }: BlogMo
               aria-expanded={commentsExpanded}
             >
               <h3 className="comments-title">
-                COMMENTS <span className="comments-count">({comments.length})</span>
+                COMMENTS <span className="comments-count">({commentTotal})</span>
               </h3>
               <svg className="comments-toggle-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -316,6 +381,7 @@ export default function BlogModal({ post, isOpen, onClose, onPostClick }: BlogMo
                         try {
                           await deleteComment(post.id, comment.id)
                           setComments(prev => prev.filter(c => c.id !== comment.id))
+                          setCommentTotal(prev => Math.max(0, prev - 1))
                           toast.success('评论已删除')
                         } catch (err) {
                           toast.error(friendlyErrorMessage(err, '删除评论失败'))
@@ -362,6 +428,31 @@ export default function BlogModal({ post, isOpen, onClose, onPostClick }: BlogMo
                   <p>No comments yet. Be the first to share your thoughts!</p>
                 </div>
               )}
+              {!loadingComments && comments.length < commentTotal && (
+                <button
+                  type="button"
+                  className="comment-submit-btn"
+                  disabled={loadingMoreComments}
+                  onClick={async () => {
+                    if (!post || loadingMoreComments) return
+                    setLoadingMoreComments(true)
+                    try {
+                      const nextPage = commentPage + 1
+                      const data = await fetchComments(post.id, { page: nextPage, pageSize: 20 })
+                      setComments(prev => {
+                        const existing = new Set(prev.map(item => item.id))
+                        return [...prev, ...data.items.filter(item => !existing.has(item.id))]
+                      })
+                      setCommentTotal(data.total)
+                      setCommentPage(nextPage)
+                    } finally {
+                      setLoadingMoreComments(false)
+                    }
+                  }}
+                >
+                  {loadingMoreComments ? '加载中…' : '加载更多评论'}
+                </button>
+              )}
             </div>
 
             <div className="comment-input-area">
@@ -384,6 +475,7 @@ export default function BlogModal({ post, isOpen, onClose, onPostClick }: BlogMo
                   try {
                     const newComment = await createComment(post.id, commentText.trim())
                     setComments(prev => [...prev, newComment])
+                    setCommentTotal(prev => prev + 1)
                     setCommentText('')
                   } catch { /* toast handled by provider */ }
                 }}

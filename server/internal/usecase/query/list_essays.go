@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
+
 	"golang.org/x/sync/singleflight"
 
 	"xoberon-server/internal/domain/entity"
@@ -14,6 +16,7 @@ import (
 
 type ListEssaysQuery struct {
 	Keyword  *string
+	AuthorID *uuid.UUID
 	Page     int
 	PageSize int
 }
@@ -36,6 +39,9 @@ func (h *ListEssaysHandler) buildCacheKey(q ListEssaysQuery) string {
 			kw = kw[:100]
 		}
 		key += "&kw=" + kw
+	}
+	if q.AuthorID != nil {
+		key += "&author=" + q.AuthorID.String()
 	}
 	return key
 }
@@ -65,7 +71,8 @@ func (h *ListEssaysHandler) Handle(ctx context.Context, q ListEssaysQuery) ([]*e
 		defer cancel()
 
 		filter := repository.EssayFilter{
-			Keyword: q.Keyword,
+			Keyword:  q.Keyword,
+			AuthorID: q.AuthorID,
 		}
 		essays, total, dbErr := h.essays.List(sfCtx, filter, q.Page, q.PageSize)
 		if dbErr != nil {

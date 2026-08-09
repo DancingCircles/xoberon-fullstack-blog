@@ -9,8 +9,8 @@ import (
 	"github.com/google/uuid"
 
 	"xoberon-server/internal/domain/errs"
-	"xoberon-server/pkg/idgen"
 	"xoberon-server/internal/domain/valueobject"
+	"xoberon-server/pkg/idgen"
 	"xoberon-server/pkg/sanitize"
 )
 
@@ -199,28 +199,28 @@ func (p *Post) DecrementLikes() {
 
 // ---- Getters ----
 
-func (p *Post) ID() uuid.UUID         { return p.id }
-func (p *Post) AuthorID() uuid.UUID   { return p.authorID }
-func (p *Post) Title() string         { return p.title }
-func (p *Post) Slug() string          { return p.slug.String() }
-func (p *Post) Excerpt() string       { return p.excerpt }
-func (p *Post) Content() string       { return p.content }
-func (p *Post) Category() string      { return p.category }
-func (p *Post) Tags() []string        { return p.tags }
-func (p *Post) LikeCount() int        { return p.likeCount }
-func (p *Post) ReadTime() int         { return p.readTime }
-func (p *Post) ReviewStatus() string  { return p.reviewStatus }
-func (p *Post) AuthorName() string    { return p.authorName }
-func (p *Post) AuthorAvatar() string  { return p.authorAvatar }
-func (p *Post) AuthorHandle() string  { return p.authorHandle }
-func (p *Post) CreatedAt() time.Time  { return p.createdAt }
-func (p *Post) UpdatedAt() time.Time  { return p.updatedAt }
+func (p *Post) ID() uuid.UUID        { return p.id }
+func (p *Post) AuthorID() uuid.UUID  { return p.authorID }
+func (p *Post) Title() string        { return p.title }
+func (p *Post) Slug() string         { return p.slug.String() }
+func (p *Post) Excerpt() string      { return p.excerpt }
+func (p *Post) Content() string      { return p.content }
+func (p *Post) Category() string     { return p.category }
+func (p *Post) Tags() []string       { return p.tags }
+func (p *Post) LikeCount() int       { return p.likeCount }
+func (p *Post) ReadTime() int        { return p.readTime }
+func (p *Post) ReviewStatus() string { return p.reviewStatus }
+func (p *Post) AuthorName() string   { return p.authorName }
+func (p *Post) AuthorAvatar() string { return p.authorAvatar }
+func (p *Post) AuthorHandle() string { return p.authorHandle }
+func (p *Post) CreatedAt() time.Time { return p.createdAt }
+func (p *Post) UpdatedAt() time.Time { return p.updatedAt }
 
 // Flag 标记为疑似违规（AI 巡查发现）
-func (p *Post) Flag()    { p.reviewStatus = "flagged" }
+func (p *Post) Flag() { p.reviewStatus = "flagged" }
 
 // Hide 隐藏帖子（管理员拒绝）
-func (p *Post) Hide()    { p.reviewStatus = "hidden" }
+func (p *Post) Hide() { p.reviewStatus = "hidden" }
 
 // Restore 恢复为已发布（管理员审批通过）
 func (p *Post) Restore() { p.reviewStatus = "published" }

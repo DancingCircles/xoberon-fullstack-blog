@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { DataProvider } from '../data/DataProvider'
 import { ToastContext } from '../toast/ToastContext'
+import { AuthContext, type AuthContextType } from '../auth/AuthContext'
 import { useData } from '../../hooks/auth/useData'
 import type { ReactNode } from 'react'
 import type { BlogPost, EssayItem } from '../../assets/data/types'
@@ -40,10 +41,23 @@ const mockToast = {
   info: vi.fn(),
 }
 
+const anonymousAuth = {
+  currentUser: null,
+  isAuthenticated: false,
+  isLoading: false,
+  isChecking: false,
+  authStatus: 'anonymous',
+  isAdmin: false,
+  isOwner: false,
+  login: vi.fn(), register: vi.fn(), logout: vi.fn(), updateProfile: vi.fn(), requireAuth: vi.fn(() => false),
+} as AuthContextType
+
 function wrapper({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ toast: mockToast }}>
-      <DataProvider>{children}</DataProvider>
+      <AuthContext.Provider value={anonymousAuth}>
+        <DataProvider>{children}</DataProvider>
+      </AuthContext.Provider>
     </ToastContext.Provider>
   )
 }
